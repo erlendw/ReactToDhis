@@ -15,26 +15,6 @@ class App extends React.Component {
     }
 
     componentWillMount() {
-
-        var url = 'https://chat.berg-hansen.no/I3Root/websvcs/chat/start'
-        Request
-            .post(url).set("application/x-www-form-urlencoded").send({})
-            .end(function (err, res) {
-                if (err || !res.ok) {
-                    alert('Oh no! error');
-                } else {
-                    alert('yay got ' + JSON.stringify(res.body));
-                }
-            });
-
-        /*.then((response) => {
-
-                //this.setState({svampebober : response})
-                console.log(response)
-
-            })*/
-        //console.log("lastet")    
-
     }
 
     clicked(innnn) {
@@ -49,7 +29,6 @@ class App extends React.Component {
             <div className="container-fluid">
                 {this.state.svampebober}
                 <Button bsStyle="primary" bsSize="large" onClick={(e) => { this.clicked("jeg er ikke svampebob") } } >Large button</Button>
-
             </div>
         );
     }
