@@ -1,18 +1,46 @@
 import React from 'react';
 
-import { Button,Table,Navbar,Nav,NavItem, NavDropdown, FormGroup,FormControl, NavbarBrand, MenuItem,  } from 'react-bootstrap';
+import { Button,Table,Navbar,Nav,NavItem,Form,ControlLabel, NavDropdown, FormGroup,FormControl, NavbarBrand, MenuItem,  } from 'react-bootstrap';
 import { CreateStore } from 'redux';
 import Request from 'superagent'
 import btoa from 'btoa'
 import $ from 'jquery'
+
 
 class App extends React.Component {
 
     constructor() { //class constructor
         super();
         this.state = {
-            settings: ['erlend','erlend', '1','1']
+            settings: ['erlend','erlend', '1','1'],
+            search : []
         };
+
+    }
+
+    search(e){
+
+
+        console.log(e.target.value)
+
+        var satan =[];
+
+        //console.log(this.state.settings)
+
+        this.state.settings.forEach(function (elem) {
+
+            if(elem.displayName.toLowerCase().indexOf(e.target.value.toLowerCase()) !== -1 ){
+
+                satan.push(elem)
+
+            }
+
+            
+        })
+
+        this.setState({search : satan})
+
+
 
     }
 
@@ -31,6 +59,7 @@ class App extends React.Component {
 
             console.log(response.organisationUnits);
             this.setState({settings : response.organisationUnits});
+            this.setState({search: response.organisationUnits })
         });
     }
 
@@ -41,11 +70,13 @@ class App extends React.Component {
             <div>
 
                 <Header />
-                <FormGroup>
-                    <FormControl type="text" placeholder="Search" />
-                </FormGroup>
-                {' '}
-                <Button type="submit">Submit</Button>
+
+                <FormControl
+                    type="text"
+                    placeholder="Enter text"
+                    onChange={(e) => { this.search(e) }}
+                />
+
                 <Table striped bordered condensed hover>
                     <thead>
                     <tr>
@@ -55,7 +86,7 @@ class App extends React.Component {
                     </thead>
 
                     <tbody>
-                    {this.state.settings.map(function (user,i) {
+                    {this.state.search.map(function (user,i) {
 
 
                         return <tr><td>{user.id}</td><td>{user.displayName}</td></tr>
