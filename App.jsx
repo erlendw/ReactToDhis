@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Button } from 'react-bootstrap';
+import { Button,Table,  } from 'react-bootstrap';
 import { CreateStore } from 'redux';
 import Request from 'superagent'
 import btoa from 'btoa'
@@ -41,15 +41,24 @@ class App extends React.Component {
             <div className="container-fluid">
                 <Button bsStyle="primary" bsSize="large" onClick={(e) => { this.clicked("jeg er ikke svampebob") } } >Large button</Button>
 
-                <ul>
+                <Table striped bordered condensed hover>
+                    <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Displayname</th>
+                    </tr>
+                    </thead>
 
+                    <tbody>
                     {this.state.settings.map(function (user,i) {
 
-                        return <li>{user.id}{user.displayName}</li>
-                        
-                    })}
 
-                </ul>
+                        return <tr><td>{user.id}</td><td>{user.displayName}</td></tr>
+
+                    })}
+                    </tbody>
+
+                </Table>
 
             </div>
         );
