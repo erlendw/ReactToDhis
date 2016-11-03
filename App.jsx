@@ -11,16 +11,15 @@ class App extends React.Component {
     constructor() { //class constructor
         super();
         this.state = {
-            settings: "jeg ereee svampebob"
+            settings: ['erlend','erlend', '1','1']
         };
 
     }
 
     clicked(innnn) {
         var auth = btoa('admin:district');
-
         var settings = {
-            "url": "https://play.dhis2.org/demo/api/resources.json",
+            "url": "https://play.dhis2.org/demo/api/organisationUnits.json?paging=false",
             "method": "GET",
             "headers": {
                 "content-type": "application/json",
@@ -30,15 +29,9 @@ class App extends React.Component {
 
         $.ajax(settings).done((response) => {
 
-            console.log(response.resources);
-            this.setState({settings : response.resources[0].displayName});
-
+            console.log(response.organisationUnits);
+            this.setState({settings : response.organisationUnits});
         });
-
-
-
-
-
     }
 
 
@@ -46,9 +39,17 @@ class App extends React.Component {
     render() {
         return (
             <div className="container-fluid">
-                {this.state.settings}
-                {this.state.somies}
                 <Button bsStyle="primary" bsSize="large" onClick={(e) => { this.clicked("jeg er ikke svampebob") } } >Large button</Button>
+
+                <ul>
+
+                    {this.state.settings.map(function (user,i) {
+
+                        return <li>{user.id}{user.displayName}</li>
+                        
+                    })}
+
+                </ul>
 
             </div>
         );
