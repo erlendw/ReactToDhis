@@ -19,27 +19,17 @@ class App extends React.Component {
     }
 
     search(e){
-
-
-        console.log(e.target.value)
-
-        var satan =[];
-
+        console.log(e.target.value);
+        var search =[];
         //console.log(this.state.settings)
-
         this.state.settings.forEach(function (elem) {
-
             if(elem.displayName.toLowerCase().indexOf(e.target.value.toLowerCase()) !== -1 ){
-
-                satan.push(elem)
-
+                search.push(elem)
             }
+        });
+        this.setState({search : search})
 
-            
-        })
-
-        this.setState({search : satan})
-
+        
 
 
     }
