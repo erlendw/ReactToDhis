@@ -3,32 +3,53 @@ import React from 'react';
 import { Button } from 'react-bootstrap';
 import { CreateStore } from 'redux';
 import Request from 'superagent'
+import btoa from 'btoa'
+import $ from 'jquery'
 
 class App extends React.Component {
 
     constructor() { //class constructor
         super();
         this.state = {
-            svampebober: "jeg er svampebob"
+            settings: "jeg ereee svampebob"
         };
 
     }
 
-    componentWillMount() {
-    }
-
     clicked(innnn) {
-        console.log("was clicked son")
+        var auth = btoa('admin:district');
 
-        this.setState({ svampebober: innnn });
+        var settings = {
+            "url": "https://play.dhis2.org/demo/api/resources.json",
+            "method": "GET",
+            "headers": {
+                "content-type": "application/json",
+                "authorization": "Basic " + auth
+            }
+        };
+
+        $.ajax(settings).done((response) => {
+
+            console.log(response.resources);
+            this.setState({settings : response.resources[0].displayName});
+
+        });
+
+
+
+
 
     }
+
+
 
     render() {
         return (
             <div className="container-fluid">
-                {this.state.svampebober}
+                {this.state.settings}
+                {this.state.somies}
                 <Button bsStyle="primary" bsSize="large" onClick={(e) => { this.clicked("jeg er ikke svampebob") } } >Large button</Button>
+
             </div>
         );
     }
