@@ -2,6 +2,7 @@ import React from 'react';
 
 import { Button,Table,Navbar,Nav,NavItem,Form,ControlLabel, NavDropdown, FormGroup,FormControl, NavbarBrand, MenuItem,  } from 'react-bootstrap';
 import { CreateStore } from 'redux';
+import Search from './containers/Search'
 import Request from 'superagent'
 import btoa from 'btoa'
 import $ from 'jquery'
@@ -9,82 +10,11 @@ import $ from 'jquery'
 
 class App extends React.Component {
 
-    constructor() { //class constructor
-        super();
-        this.state = {
-            settings: ['erlend','erlend', '1','1'],
-            search : []
-        };
-
-    }
-
-    search(e){
-        console.log(e.target.value);
-        var search =[];
-        //console.log(this.state.settings)
-        this.state.settings.forEach(function (elem) {
-            if(elem.displayName.toLowerCase().indexOf(e.target.value.toLowerCase()) !== -1 ){
-                search.push(elem)
-            }
-        });
-        this.setState({search : search})
-
-        
-
-
-    }
-
-    componentWillMount (){
-        var auth = btoa('admin:district');
-        var settings = {
-            "url": "https://play.dhis2.org/demo/api/organisationUnits.json?paging=false",
-            "method": "GET",
-            "headers": {
-                "content-type": "application/json",
-                "authorization": "Basic " + auth
-            }
-        };
-
-        $.ajax(settings).done((response) => {
-
-            console.log(response.organisationUnits);
-            this.setState({settings : response.organisationUnits});
-            this.setState({search: response.organisationUnits })
-        });
-    }
-
-
-
     render() {
         return (
             <div>
 
-                <Header />
-
-                <FormControl
-                    type="text"
-                    placeholder="Enter text"
-                    onChange={(e) => { this.search(e) }}
-                />
-
-                <Table striped bordered condensed hover>
-                    <thead>
-                    <tr>
-                        <th>Id</th>
-                        <th>Displayname</th>
-                    </tr>
-                    </thead>
-
-                    <tbody>
-                    {this.state.search.map(function (user,i) {
-
-
-                        return <tr><td>{user.id}</td><td>{user.displayName}</td></tr>
-
-                    })}
-                    </tbody>
-
-                </Table>
+                <Search />
 
             </div>
         );
