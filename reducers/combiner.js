@@ -4,11 +4,13 @@
 
 import {combineReducers} from 'redux'
 import OrganisationReducer from './organisation';
+import SearchReducer from './search';
 
 
 const mainReducer = combineReducers({
 
-    organisations : OrganisationReducer
+    organisations : OrganisationReducer,
+    search : SearchReducer
 
 });
 
