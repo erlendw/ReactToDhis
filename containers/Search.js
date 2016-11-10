@@ -5,29 +5,33 @@
 import React from 'react'
 import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
-import {updateSearch} from '../actions/actions'
+import {recievedOrganisations, fetchOrganisations} from '../actions/actions'
 class Search extends React.Component {
+
+    componentWillMount(){
+
+        this.props.fetchOrganisations()
+
+    }
+
     render() {
         return (
-            <div onClick={() =>this.props.updateSearch(this.props.organisations[0].erled)}>
-                {this.props.organisations[0].erled}
+            <div onClick={() => this.props.fetchOrganisations()}>
+                ERLEND
             </div>
         );
     }
 }
 
 function mapStateToProps(state){
-
     return{
-
         organisations: state.organisations
-
     }
 
 }
 
 function matchDispatchToProps(dispatch){
-    return bindActionCreators({updateSearch: updateSearch},dispatch)
+    return bindActionCreators({recievedOrganisations: recievedOrganisations, fetchOrganisations : fetchOrganisations},dispatch)
 }
 
 export default connect(mapStateToProps, matchDispatchToProps)(Search);
