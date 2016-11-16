@@ -11,6 +11,8 @@ const serverUrl = 'https://play.dhis2.org/test/api/organisationUnits.json?fields
 const mapzenSearchUrl1 = 'https://search.mapzen.com/v1/search?text='
 const mapzenSearchUrl2  = '&api_key=mapzen-ifZwZZ9'
 const basicAuth = `Basic ${btoa('admin:district')}`;
+
+
 const fetchOptions = {
     method: 'GET',
     headers: {
@@ -55,7 +57,7 @@ export const findMatchingElements = (data, search) => {
     }
 };
 
-export const changeLevel = (e, data, all) => {
+export const changeLevel = (e , data, all) => {
     return(dispatch) => {
         var satan = [];
         if(e.target.value == 5){
