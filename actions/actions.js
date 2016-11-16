@@ -5,8 +5,21 @@
 import btoa from 'btoa'
 import Axios from 'axios'
 
+// https://play.dhis2.org/demo/api/organisationUnits.json?filter=id:eq:vWbkYPRmKyS&fields=id,displayName,level,coordinates,children&paging=false&level=3
+const serverUrl = 'https://play.dhis2.org/test/api/organisationUnits.json?fields=id,displayName,level,coordinates,parent[displayName,parent[displayName]]&paging=false';
+//const serverUrl = 'https://play.dhis2.org/test/api/organisationUnits.json?filter=id:eq:vWbkYPRmKyS&fields=coordinates,displayName';
+const mapzenSearchUrl1 = 'https://search.mapzen.com/v1/search?text='
+const mapzenSearchUrl2  = '&api_key=mapzen-ifZwZZ9'
+const basicAuth = `Basic ${btoa('admin:district')}`;
+const fetchOptions = {
+    method: 'GET',
+    headers: {
+        Authorization: basicAuth,
+        'Content-Type': 'application/json'
+    }
+};
 
-export const recievedOrganisations = (data) => {
+export const recievedOrganisations = (data) => {  
     return{
         type: "ORGANISATIONS_RECIEVED",
         payload: data
@@ -20,31 +33,43 @@ export const updateSearch = (data) => {
     }
 };
 
+export const getLocationSuccess = (markers) => {
+  return {
+    type: 'GET_LOCATION_SUCCESS',
+    markers
+  }
+};
 
-const serverUrl = 'https://play.dhis2.org/test/api/organisationUnits.json?paging=false';
-const apiUrl = 'http://58233197a2c5d71200cd1f4b.mockapi.io/book';
-const basicAuth = `Basic ${btoa('admin:district')}`;
-const fetchOptions = {
-    method: 'GET',
-    headers: {
-        Authorization: basicAuth,
-        'Content-Type': 'application/json'
+
+
+export const findMatchingElements = (data, search) => {
+    return(dispatch) => {
+        var satan = [];
+        data.forEach( (elem) =>
+        {
+            if(elem.displayName.toLowerCase().indexOf(search.target.value.toLowerCase()) !== -1 ){
+                satan.push(elem)
+            }
+        });
+        dispatch(updateSearch(satan))
     }
 };
 
-export const findMatchingElements = (data, search) => {
-
-return(dispatch) => {
-    var satan = [];
-    data.forEach( (elem) =>
-    {
-        if(elem.displayName.toLowerCase().indexOf(search.target.value.toLowerCase()) !== -1 ){
-            satan.push(elem)
+export const changeLevel = (e, data, all) => {
+    return(dispatch) => {
+        var satan = [];
+        if(e.target.value == 5){
+            dispatch(updateSearch(all));
         }
-    });
-
-    dispatch(updateSearch(satan))
-}
+        else{
+            data.forEach( (elem) => {
+                if(elem.level == e.target.value){
+                    satan.push(elem)
+                }
+            });
+            dispatch(updateSearch(satan))
+        }
+    }   
 };
 
 export const fetchOrganisations = () => {
@@ -56,10 +81,48 @@ export const fetchOrganisations = () => {
                 dispatch(recievedOrganisations(response.data.organisationUnits));
                 dispatch(updateSearch(response.data.organisationUnits));
                 console.log(response.data.organisationUnits)
+
+                response.data.organisationUnits.forEach((co) =>{
+                    var j = JSON.parse(co.coordinates);
+                    var googleArray = []
+                    j[0][0].forEach((c) => {
+                      
+                        var ut = {                                                          // Create an object with the coordinates 
+                            lng: c[0],
+                            lat: c[1]
+                        } 
+                        googleArray.push(ut);
+                        dispatch(getLocationSuccess(ut)); 
+                    });
+                   
+                   
+                });
             })
             .catch(error => {
                 throw(error);
             });
     }
+};
 
+export const getLocation = (name) => {
+    return (dispatch) => {
+        var url = mapzenSearchUrl1 + name + mapzenSearchUrl2;                               // Http-request url
+        return Axios.get(url)                                                               // Do the request
+            .then(response => {
+                for(var i = 0; i < response.data.features.length; i++){                     // Iterate the different locations mapzen found
+                    if(response.data.features[i].properties.country == "Sierra Leone"){     // The first one that is in Sierra Leone is probably the right one
+                        var ut = {                                                          // Create an object with the coordinates 
+                            lng: response.data.features[i].geometry.coordinates[0],
+                            lat: response.data.features[i].geometry.coordinates[1]
+                        } 
+                    dispatch(getLocationSuccess(ut));                                       // Send coordinates to be added to markers array
+                    return;
+                    }
+                }                                                                            
+                console.log('Sorry, but we were unable to find the location for this organisation unit');  //could not find location. should display some error message
+            })
+            .catch(error => {
+            throw(error);
+            });
+        };
 };  

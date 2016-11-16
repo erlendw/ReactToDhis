@@ -3,14 +3,15 @@
  */
 
 import {combineReducers} from 'redux'
-import OrganisationReducer from './organisation';
-import SearchReducer from './search';
-
+import organisations from './organisation';
+import search from './search';
+import markers from './marker';
 
 const mainReducer = combineReducers({
 
-    organisations : OrganisationReducer,
-    search : SearchReducer
+    organisations,
+    search,
+    markers 
 
 });
 
