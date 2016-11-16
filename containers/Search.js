@@ -5,7 +5,7 @@ import { Button,Table,Navbar,Nav,NavItem,Form,ControlLabel, NavDropdown, FormGro
 import React from 'react'
 import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
-import {recievedOrganisations, fetchOrganisations, findMatchingElements, getLocation, changeLevel} from '../actions/actions'
+import {recievedOrganisations, fetchOrganisations, findMatchingElements, getLocation, changeLevel, showAddOrgModal} from '../actions/actions'
 import List from './List';
 import {Gmaps, Marker, InfoWindow, Circle, Polygon} from 'react-gmaps';
 
@@ -72,6 +72,15 @@ class Search extends React.Component {
                                 placeholder="Search Organisation Units..."
                                 onChange={ (text) => { this.props.findMatchingElements( this.props.organisations, text) }}
                             />
+
+                            <Button
+                                bsStyle="primary"
+                                bsSize="large"
+                                onClick={() => {this.props.showAddOrgModal(true)}}
+                            >
+                                Launch demo modal
+                            </Button>
+
                         </Well>
                     </div>                 
                     <div id="results">
@@ -122,7 +131,8 @@ const mapStateToProps = (state) => {
     return{
         organisations: state.organisations,
         search: state.search,
-        markers: state.markers
+        markers: state.markers,
+        ui : state.ui
     }
 
 };
@@ -133,7 +143,8 @@ const mapDispatchToProps = (dispatch) => {
         fetchOrganisations : () => dispatch(fetchOrganisations()), 
         findMatchingElements : (data, search) => dispatch(findMatchingElements(data, search)),
         getLocation: name => dispatch(getLocation(name)),
-        changeLevel: (level, search, organisations) => dispatch(changeLevel(level, search, organisations))
+        changeLevel: (level, search, organisations) => dispatch(changeLevel(level, search, organisations)),
+        showAddOrgModal: b => dispatch(showAddOrgModal(b))
 
     }
 };
