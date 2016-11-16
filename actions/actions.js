@@ -33,7 +33,7 @@ const fetchOptions = {
 };
 
 export const findMatchingElements = (data, search) => {
-    
+
 return(dispatch) => {
     var satan = [];
     data.forEach( (elem) =>
