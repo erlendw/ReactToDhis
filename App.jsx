@@ -3,6 +3,7 @@ import React from 'react';
 import { Button,Table,Navbar,Nav,NavItem,Form,ControlLabel, NavDropdown, FormGroup,FormControl, NavbarBrand, MenuItem,  } from 'react-bootstrap';
 import { CreateStore } from 'redux';
 import Search from './containers/Search'
+import AddOrg from './containers/AddOrg'
 import Request from 'superagent'
 import btoa from 'btoa'
 import $ from 'jquery'
@@ -13,6 +14,7 @@ class App extends React.Component {
     render() {
         return (
             <div>
+                <AddOrg />
                 <Header />
                 <Search />
             </div>

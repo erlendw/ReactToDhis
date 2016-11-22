@@ -43,6 +43,16 @@ export const getLocationSuccess = (markers) => {
   }
 };
 
+export const showAddOrgModal = (b) => { //b === boolean
+    console.log(b);
+    return {
+        type: 'ADDORG_UPDATED',
+        payload : b
+    }
+};
+
+
+//ADDORG_UPDATED
 
 
 export const findMatchingElements = (data, search) => {
