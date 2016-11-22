@@ -34,7 +34,7 @@ class Search extends React.Component {
     onItemClick(item, parent) {
         console.log(parent);
         console.log(item.displayName)
-        parent.getLocation(item.displayName);   
+        parent.getLocation(item.displayName, item);   
     }
     onMapCreated(m){
         console.log(m);
@@ -123,6 +123,7 @@ const mapStateToProps = (state) => {
         organisations: state.organisations,
         search: state.search,
         markers: state.markers
+
     }
 
 };
@@ -132,7 +133,7 @@ const mapDispatchToProps = (dispatch) => {
         recievedOrganisations: payload => dispatch(recievedOrganisations(payload)),
         fetchOrganisations : () => dispatch(fetchOrganisations()), 
         findMatchingElements : (data, search) => dispatch(findMatchingElements(data, search)),
-        getLocation: name => dispatch(getLocation(name)),
+        getLocation: (name, item) => dispatch(getLocation(name, item)),
         changeLevel: (level, search, organisations) => dispatch(changeLevel(level, search, organisations))
 
     }

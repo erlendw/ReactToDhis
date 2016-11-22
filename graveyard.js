@@ -60,3 +60,20 @@ function matchDispatchToProps(dispatch){
                 {listItems}
             </tbody>
         </Table>  
+
+
+response.data.organisationUnits.forEach((co) =>{
+                    var j = JSON.parse(co.coordinates);
+                    var googleArray = []
+                    j[0][0].forEach((c) => {
+                      
+                        var ut = {                                                          // Create an object with the coordinates 
+                            lng: c[0],
+                            lat: c[1]
+                        } 
+                        googleArray.push(ut);
+                        dispatch(getLocationSuccess(ut)); 
+                    });
+                   
+                   
+                });

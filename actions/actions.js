@@ -4,6 +4,7 @@
 
 import btoa from 'btoa'
 import Axios from 'axios'
+import async from 'async'
 
 // https://play.dhis2.org/demo/api/organisationUnits.json?filter=id:eq:vWbkYPRmKyS&fields=id,displayName,level,coordinates,children&paging=false&level=3
 const serverUrl = 'https://play.dhis2.org/test/api/organisationUnits.json?fields=id,displayName,level,coordinates,parent[displayName,parent[displayName]]&paging=false';
@@ -80,25 +81,51 @@ export const fetchOrganisations = () => {
 
         return Axios.get(serverUrl, fetchOptions)
             .then(response => {
+                console.log(response.data.organisationUnits);
+
+                async.forEach(response.data.organisationUnits, function (organisation, callback) {
+            
+                    if(organisation.coordinates != undefined){
+                        
+                        var j = JSON.parse(organisation.coordinates);
+
+                        var array = [];
+        
+                        if(j[0][0] == undefined){
+
+                            var ut = {                                                          // Create an object with the coordinates 
+                                    lng: j[0],
+                                    lat: j[1]
+                                } 
+                            array.push(ut);
+                            organisation.coordinatesObject = array;
+                            dispatch(getLocationSuccess(ut)); 
+                      
+                        }
+                        else{
+                            j[0][0].forEach((c) => {       
+                                           
+                                var ut = {                                                          // Create an object with the coordinates 
+                                    lng: c[0],
+                                    lat: c[1]
+                                } 
+                                array.push(ut);
+                                
+                            });
+                             organisation.coordinatesObject = array;
+                        }
+                    }
+                });
+
+
+
+
                 dispatch(recievedOrganisations(response.data.organisationUnits));
                 dispatch(updateSearch(response.data.organisationUnits));
-                console.log(response.data.organisationUnits)
+              
+                console.log("UTA");
 
-                response.data.organisationUnits.forEach((co) =>{
-                    var j = JSON.parse(co.coordinates);
-                    var googleArray = []
-                    j[0][0].forEach((c) => {
-                      
-                        var ut = {                                                          // Create an object with the coordinates 
-                            lng: c[0],
-                            lat: c[1]
-                        } 
-                        googleArray.push(ut);
-                        dispatch(getLocationSuccess(ut)); 
-                    });
-                   
-                   
-                });
+                
             })
             .catch(error => {
                 throw(error);
@@ -106,9 +133,14 @@ export const fetchOrganisations = () => {
     }
 };
 
-export const getLocation = (name) => {
+export const getLocation = (name, organisation) => {
     return (dispatch) => {
-        var url = mapzenSearchUrl1 + name + mapzenSearchUrl2;                               // Http-request url
+        var url = mapzenSearchUrl1 + name + mapzenSearchUrl2;  
+        console.log(organisation.coordinatesObject);
+        organisation.coordinatesObject.forEach(co => {
+            dispatch(getLocationSuccess(co));                
+        });
+                    
         return Axios.get(url)                                                               // Do the request
             .then(response => {
                 for(var i = 0; i < response.data.features.length; i++){                     // Iterate the different locations mapzen found
