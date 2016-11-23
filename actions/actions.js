@@ -7,10 +7,10 @@ import Axios from 'axios'
 import async from 'async'
 
 // https://play.dhis2.org/demo/api/organisationUnits.json?filter=id:eq:vWbkYPRmKyS&fields=id,displayName,level,coordinates,children&paging=false&level=3
-const serverUrl = 'https://play.dhis2.org/test/api/organisationUnits.json?fields=id,displayName,level,coordinates,parent[displayName,parent[displayName]]&paging=false';
+const serverUrl = 'https://play.dhis2.org/test/api/organisationUnits.json?fields=id,displayName,level,coordinates,parent[displayName,parent[displayName]],children[displayName,coordinates,level,children[displayName]]&paging=false';
+//const shortServerUrl = 'https://play.dhis2.org/test/api/organisationUnits';
 //const serverUrl = 'https://play.dhis2.org/test/api/organisationUnits.json?filter=id:eq:vWbkYPRmKyS&fields=coordinates,displayName';
-const mapzenSearchUrl1 = 'https://search.mapzen.com/v1/search?text='
-const mapzenSearchUrl2  = '&api_key=mapzen-ifZwZZ9'
+
 const basicAuth = `Basic ${btoa('admin:district')}`;
 
 
@@ -21,6 +21,7 @@ const fetchOptions = {
         'Content-Type': 'application/json'
     }
 };
+
 
 export const recievedOrganisations = (data) => {  
     return{
@@ -36,12 +37,73 @@ export const updateSearch = (data) => {
     }
 };
 
-export const getLocationSuccess = (markers) => {
+export const getLocationSuccess = (coordinates, map, item) => {
+
+    /*
+    This function creates a marker for a facility, adds a 
+    info window to it and sends it to the store
+    */
+
+    // Taking into account that some organisational units 
+    // have invalid parent data
+    var district = " ";
+    var chiefdom = " ";
+
+    if(item.parent != undefined)
+        chiefdom = item.parent.displayName;
+        if(item.parent.parent != undefined)
+            district = item.parent.parent.displayName
+    
+    // Text for info window
+    var info =  '<div id="content">'+
+                    '<div id="siteNotice">'+
+                    '</div>'+
+                    '<h2 id="secondHeading" class="secondHeading">'+ item.displayName+'</h2>'+
+                    '<div id="bodyContent">'+
+                    '<p><b>Chiefdom: </b>'+ chiefdom + 
+                    '<p><b>District: </b>'+ district + 
+                    '</p>'+
+                    '</div>'+
+                '</div>';
+
+    // Create the marker
+    var marker = new google.maps.Marker({
+        position: coordinates,
+        icon: 'containers/marker.png',
+        map: map
+    });
+
+    // Create an info window for the marker
+    var infowindow = new google.maps.InfoWindow({
+        content: info
+    });
+
+    // Add listener to marker so info window is displayed if marker is clicked
+    marker.addListener('click', function() {
+        infowindow.open(map, marker);
+    });
+
+    return {
+        type: 'GET_LOCATION_SUCCESS',
+        marker
+    }
+};
+
+export const getChiefdomBorderSuccess = (cords) => {
   return {
-    type: 'GET_LOCATION_SUCCESS',
-    markers
+    type: 'GET_CHIEFDOM_BORDER_SUCCESS',
+    cords
   }
 };
+
+export const getDistrictBorderSuccess = (cords) => {
+  return {
+    type: 'GET_DISTRICT_BORDER_SUCCESS',
+    cords
+  }
+};
+
+
 
 export const showAddOrgModal = (b) => { //b === boolean
     console.log(b);
@@ -50,6 +112,134 @@ export const showAddOrgModal = (b) => { //b === boolean
         payload : b
     }
 };
+
+export const addDistrictBorderPolygon = (cords, item, map, dispatch) => {
+    var districtBorder = new google.maps.Polygon({
+        paths: cords,
+        strokeColor: '#FF0000',
+        strokeOpacity: 0.8,
+        strokeWeight: 2,
+        fillColor: '#FF0000',
+        fillOpacity: 0.25
+    });
+
+    districtBorder.addListener('click', function(event) {
+   
+        //console.log("fart");
+        //console.log(item.centerCoordinates);
+        map.setZoom(9);
+        map.setCenter(item.centerCoordinates);
+        item.children.forEach((child) => {
+            var j = JSON.parse(child.coordinates);
+           // console.log(j);
+           
+            for(var i = 0; i < j.length; i+=1){
+                dispatch(createChildPolygon(j[i],map, child));
+            }               
+            
+        });
+        
+    });
+    return {
+        type: 'ADD_DISTRICT_BORDER_POLYGON',
+        districtBorder
+    }
+};
+
+
+export const createChildPolygon = (childCords, map, child) =>{
+
+    var bounds = new google.maps.LatLngBounds();
+    var temp = [];
+    //console.log(j[i]);
+    childCords.forEach((c) => {
+        c.forEach((subC)=>{
+        
+           // console.log(c);
+            var ut = {                                                          
+                lng: subC[0],
+                lat: subC[1]
+            } 
+            bounds.extend(ut);
+            temp.push(ut); 
+        });
+                                      
+    });
+
+    var info =  '<div id="content">'+
+                    '<div id="siteNotice">'+
+                    '</div>'+
+                    '<h2 id="secondHeading" class="secondHeading">'+ child.displayName+'</h2>'+
+                    '<div id="bodyContent">'+
+                    '<p><b>Facilities in this Chiefdom: </b></p>'+
+                    '<p>';
+
+    child.children.forEach((child) => {
+        console.log(child.displayName);
+        info += child.displayName + '<br/>'
+    });
+
+    info += '</p>'+'</div>'+'</div>';
+    //console.log(temp);
+    
+                              
+
+    var chiefdomBorder = new google.maps.Polygon({
+        paths: temp,
+        strokeColor: '#008822',
+        strokeOpacity: 0.8,
+        strokeWeight: 1,
+        fillColor: '#008822',
+        fillOpacity: 0.2,
+        map: map,
+        type: "chiefdomAddOn"
+    });
+
+    var infowindow = new google.maps.InfoWindow({
+        content: info,
+        position: bounds.getCenter()
+    });
+
+    chiefdomBorder.addListener('click', function(event) {
+        map.setZoom(10);
+        map.setCenter(bounds.getCenter());
+        infowindow.open(map);
+    });
+    return {
+        type: 'ADD_CHIEFDOM_BORDER_POLYGON',
+        chiefdomBorder
+    }
+}
+
+export const addChiefdomBorderPolygon = (cords) => {
+    var chiefdomBorder = new google.maps.Polygon({
+        paths: cords,
+        strokeColor: '#008822',
+        strokeOpacity: 0.8,
+        strokeWeight: 1,
+        fillColor: '#008822',
+        fillOpacity: 0.20
+    });
+    return {
+        type: 'ADD_CHIEFDOM_BORDER_POLYGON',
+        chiefdomBorder
+    }
+};
+
+export const updateChiefdomBorderPolygons = (polys) => {
+    return{
+        type: 'UPDATE_CHIEFDOM_BORDER_POLYGON',
+        polys
+    }
+}
+
+export const updateDistrictBorderPolygons = (polys) => {
+    return{
+        type: 'UPDATE_CHIEFDOM_BORDER_POLYGON',
+        polys
+    }
+}
+
 
 
 //ADDORG_UPDATED
@@ -85,56 +275,216 @@ export const changeLevel = (e , data, all) => {
     }   
 };
 
-export const fetchOrganisations = () => {
 
+export const showDistrictBorder = (props, map, singles) => {
+    console.log(props.chiefdomBorderPolygons.length);
+    return(dispatch) => {
+        singles.forEach(function(poly){
+            if(poly.type == "district")
+                poly.setMap(null);
+        });
+
+        props.districtBorderPolygons.forEach(function(dbp){
+            dbp.setMap(map);             
+        });
+        props.chiefdomBorderPolygons.forEach(function(dbp){
+            dbp.setMap(null);             
+        });
+        dispatch(updateDistrictBorderPolygons(props.districtBorderPolygons));
+        dispatch(updateChiefdomBorderPolygons(props.chiefdomBorderPolygons));
+
+    }   
+};
+
+export const showChiefdomBorder = (props, map, singles) => {
+
+    return(dispatch) => {
+        singles.forEach(function(poly){
+            poly.setMap(null);
+        });
+        props.districtBorderPolygons.forEach(function(dbp){
+            dbp.setMap(null);             
+        });
+        props.chiefdomBorderPolygons.forEach(function(dbp){
+            if(dbp.type != "chiefdomAddOn")
+                dbp.setMap(map);             
+        });
+        dispatch(updateDistrictBorderPolygons(props.districtBorderPolygons));
+        dispatch(updateChiefdomBorderPolygons(props.chiefdomBorderPolygons));
+
+    }   
+};
+
+export const showNoBorder = (props, map, singles) => {
+    console.log(props.chiefdomBorderPolygons);
+
+    return(dispatch) => {
+        singles.forEach(function(poly){
+            poly.setMap(null);
+        });
+        props.districtBorderPolygons.forEach(function(dbp){
+            dbp.setMap(null);             
+        });
+        props.chiefdomBorderPolygons.forEach(function(dbp){
+            dbp.setMap(null);             
+        });
+        dispatch(updateDistrictBorderPolygons(props.districtBorderPolygons));
+        dispatch(updateChiefdomBorderPolygons(props.chiefdomBorderPolygons));
+
+    }   
+};
+/*
+export const addNewOganisationUnit = (name, shortName, date) =>{
     return (dispatch) => {
-
-        return Axios.get(serverUrl, fetchOptions)
+        return Axios.post(shortServerUrl, fetchOptions2)
             .then(response => {
-                console.log(response.data.organisationUnits);
-
                 async.forEach(response.data.organisationUnits, function (organisation, callback) {
             
                     if(organisation.coordinates != undefined){
                         
                         var j = JSON.parse(organisation.coordinates);
-
                         var array = [];
-        
+                    
                         if(j[0][0] == undefined){
 
-                            var ut = {                                                          // Create an object with the coordinates 
-                                    lng: j[0],
-                                    lat: j[1]
-                                } 
+                            var ut = {                                                        
+                                lng: j[0],
+                                lat: j[1]
+                            } 
+
                             array.push(ut);
                             organisation.coordinatesObject = array;
-                            dispatch(getLocationSuccess(ut)); 
-                      
+
+                            if(organisation.level == 4)
+                                dispatch(getLocationSuccess(ut, map, organisation));                      
                         }
                         else{
-                            j[0][0].forEach((c) => {       
-                                           
-                                var ut = {                                                          // Create an object with the coordinates 
-                                    lng: c[0],
-                                    lat: c[1]
-                                } 
-                                array.push(ut);
+                            var ut={};
+                            if(typeof j[0] == "string" && j.length == 2){                           
+                                ut = {
+                                    lng: Number(j[0]),
+                                    lat: Number(j[1])
+                                }
+                                array.push(ut);  
+                                                          
+                            }
+                            else{
+                                j[0][0].forEach((c) => {                                           
+                                    ut = {                                                          
+                                        lng: c[0],
+                                        lat: c[1]
+                                    } 
+                                    array.push(ut);                               
+                                });
+                            }     
+                            if(organisation.level == 3){
+                        
+                                if(array.length > 6){
+                                    dispatch(getChiefdomBorderSuccess(array)); 
+                                    dispatch(addChiefdomBorderPolygon(array));            
+                                }
+                                else{
+                                    //console.log(organisation.displayName + " does not have proper coordinates");
+                                }
                                 
-                            });
-                             organisation.coordinatesObject = array;
+                            }
+                            else if(organisation.level == 2){
+                                dispatch(getDistrictBorderSuccess(array)); 
+                                dispatch(addDistrictBorderPolygon(array));
+                            }
+                           
+                            organisation.coordinatesObject = array;
+                        }
+                    }
+                });
+                dispatch(recievedOrganisations(response.data.organisationUnits));
+                dispatch(updateSearch(response.data.organisationUnits));
+            })
+            .catch(error => {
+                throw(error);
+            });
+    }
+};
+*/
+export const fetchOrganisations = (map) => {
+   
+    return (dispatch) => {
+
+        return Axios.get(serverUrl, fetchOptions)
+            .then(response => {
+                async.forEach(response.data.organisationUnits, function (organisation, callback) {
+            
+                    if(organisation.coordinates != undefined && organisation.displayName != "mmm"){
+                      
+                        var j = JSON.parse(organisation.coordinates);
+                        var array = [];
+                        var bounds = new google.maps.LatLngBounds();
+                  
+                        if(j[0][0] == undefined){
+
+                            var ut = {                                                        
+                                lng: j[0],
+                                lat: j[1]
+                            } 
+
+                            array.push(ut);
+                            organisation.coordinatesObject = array;
+
+                            if(organisation.level == 4)
+                                dispatch(getLocationSuccess(ut, map, organisation));                      
+                        }
+                        else{
+                            var ut={};
+                            if(typeof j[0] == "string" && j.length == 2){                           
+                                ut = {
+                                    lng: Number(j[0]),
+                                    lat: Number(j[1])
+                                }
+                                array.push(ut);  
+                                                          
+                            }
+                            else{                                             
+                                for(var i = 0; i < j.length; i+=1){
+                                    var temp = [];
+                                    //console.log(j[i]);
+                                    j[i].forEach((c) => {
+                                        c.forEach((subC)=>{
+                                           // console.log(c);
+                                            ut = {                                                          
+                                                lng: subC[0],
+                                                lat: subC[1]
+                                            } 
+                                            bounds.extend(ut);
+                                            temp.push(ut); 
+                                        });
+                                                                      
+                                    });
+                                    array.push(temp);
+                                }                               
+                            }
+                            if(organisation.level == 3){  
+                                array.forEach((section) =>{
+                                    if(section.length > 6){
+                                        dispatch(getChiefdomBorderSuccess(section)); 
+                                        dispatch(addChiefdomBorderPolygon(section));
+                                    }
+                                });                                           
+                            }
+                            else if(organisation.level == 2){
+                                array.forEach((section) =>{
+                                    //console.log(section);
+                                    dispatch(getDistrictBorderSuccess(section)); 
+                                    dispatch(addDistrictBorderPolygon(section, organisation, map, dispatch));
+                                });                               
+                            }                           
+                            organisation.coordinatesObject = array;
+                            organisation.centerCoordinates = bounds.getCenter();
                         }
                     }
                 });
 
-
-
-
                 dispatch(recievedOrganisations(response.data.organisationUnits));
                 dispatch(updateSearch(response.data.organisationUnits));
-              
-                console.log("UTA");
-
                 
             })
             .catch(error => {
@@ -143,30 +493,3 @@ export const fetchOrganisations = () => {
     }
 };
 
-export const getLocation = (name, organisation) => {
-    return (dispatch) => {
-        var url = mapzenSearchUrl1 + name + mapzenSearchUrl2;  
-        console.log(organisation.coordinatesObject);
-        organisation.coordinatesObject.forEach(co => {
-            dispatch(getLocationSuccess(co));                
-        });
-                    
-        return Axios.get(url)                                                               // Do the request
-            .then(response => {
-                for(var i = 0; i < response.data.features.length; i++){                     // Iterate the different locations mapzen found
-                    if(response.data.features[i].properties.country == "Sierra Leone"){     // The first one that is in Sierra Leone is probably the right one
-                        var ut = {                                                          // Create an object with the coordinates 
-                            lng: response.data.features[i].geometry.coordinates[0],
-                            lat: response.data.features[i].geometry.coordinates[1]
-                        } 
-                    dispatch(getLocationSuccess(ut));                                       // Send coordinates to be added to markers array
-                    return;
-                    }
-                }                                                                            
-                console.log('Sorry, but we were unable to find the location for this organisation unit');  //could not find location. should display some error message
-            })
-            .catch(error => {
-            throw(error);
-            });
-        };
-};  

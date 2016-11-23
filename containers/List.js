@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Button,Table,Navbar,Nav,NavItem,Form,ControlLabel, NavDropdown, FormGroup,FormControl, NavbarBrand, MenuItem, Accordion, Panel} from 'react-bootstrap';
 import * as actions from '../actions/actions';
 
-export function List({ organisations = [], onItemClick, props}) {
+export function List({ organisations = [], onItemClick, props, map, singles}) {
 
     const listItems = organisations
         .map((organisation,i) => {
@@ -12,7 +12,7 @@ export function List({ organisations = [], onItemClick, props}) {
                 <Panel header={organisation.displayName} eventKey={i} key={i}>
                     <ControlLabel>Type: </ControlLabel><p>Database</p>
                     <ControlLabel>Id: </ControlLabel><p>{organisation.id}</p>
-                    <Button  onClick={() => onItemClick(organisation, props)}>Show on Map</Button>
+                    <Button  onClick={() => onItemClick(organisation, props, map, singles)}>Show on Map</Button>
                 </Panel>
             );
             } 
@@ -21,7 +21,7 @@ export function List({ organisations = [], onItemClick, props}) {
                 <Panel header={organisation.displayName} eventKey={i} key={i}>
                     <ControlLabel>Type: </ControlLabel><p>District</p>
                     <ControlLabel>Id: </ControlLabel><p>{organisation.id}</p>
-                    <Button  onClick={() => onItemClick(organisation, props)}>Show on Map</Button>
+                    <Button  onClick={() => onItemClick(organisation, props, map, singles)}>Show on Map</Button>
                 </Panel>
             );
             }  
@@ -31,7 +31,7 @@ export function List({ organisations = [], onItemClick, props}) {
                     <ControlLabel>Type: </ControlLabel><p>Chiefdom</p>
                     <ControlLabel>Id: </ControlLabel><p>{organisation.id}</p>
                     <ControlLabel>District: </ControlLabel><p>{organisation.parent.displayName}</p>
-                    <Button  onClick={() => onItemClick(organisation, props)}>Show on Map</Button>
+                    <Button  onClick={() => onItemClick(organisation, props, map, singles)}>Show on Map</Button>
                 </Panel>
             );
             }         
@@ -42,7 +42,7 @@ export function List({ organisations = [], onItemClick, props}) {
                     <ControlLabel>Chiefdom: </ControlLabel><p>{organisation.parent.displayName}</p>
 
                     <ControlLabel>District: </ControlLabel><p>{organisation.parent.parent.displayName}</p>
-                    <Button  onClick={() => onItemClick(organisation, props)}>Show on Map</Button>
+                    <Button onClick={() => onItemClick(organisation, props, map, singles)}>Show on Map</Button>
                 </Panel>
             );
         });

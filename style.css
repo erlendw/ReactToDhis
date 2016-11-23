@@ -4,10 +4,12 @@
 	display: inline;
 }
 #map{
-	width:70%;
+	width:67%;
 	float: left;
 	margin-left:15px;
+	margin-right:15px;
 	border-radius: 5px;
+	height: 80%;
 }
 #search{
 	width: 28%;
@@ -19,7 +21,7 @@
 	height: 40%
 }
 #results{
-	height: 60%;
+	height: 50%;
 }
 #result-table{
 	table-layout:fixed;
@@ -27,7 +29,7 @@
 }
 
 #results-wrapper{
-	height: 500px;
+	height: 300px;
 	overflow: auto;
 }
 a{
@@ -37,4 +39,10 @@ a{
 	padding: 5px;
 	border-radius: 5px;
 	margin-bottom: 15px;
+}
+#border-buttons{
+	margin-bottom: 15px;
+}
+#new-button{
+	float:right;
 }

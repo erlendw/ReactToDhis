@@ -4,12 +4,12 @@
 import React from 'react';
 import {connect} from 'react-redux';
 
-import {showAddOrgModal} from '../actions/actions'
+import {showAddOrgModal, addNewOganisationUnit} from '../actions/actions'
 
 
-import {Modal,OverlayTrigge, Button} from 'react-bootstrap'
+import {Modal,OverlayTrigge, Button, ControlLabel, FormControl, FormGroup, Col, Form} from 'react-bootstrap'
 
-
+var adate = new Date();
 class AddOrg extends React.Component {
 
     render(){
@@ -18,27 +18,45 @@ class AddOrg extends React.Component {
             <div>
                 <Modal show={this.props.ui} >
                     <Modal.Header>
-                        <Modal.Title>Modal heading</Modal.Title>
+                        <Modal.Title>Add new Organisation Unit</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <h4>Text in a modal</h4>
-                        <p>Duis mollis, est non commodo luctus, nisi erat porttitor ligula.</p>
+                    <Form horizontal>
+                        <FormGroup controlId="formHorizontalEmail">
+                            <Col componentClass={ControlLabel} sm={4}>
+                                Name
+                            </Col>
+                            <Col sm={6}>
+                                <FormControl placeholder="Name"/>
+                            </Col>
+                        </FormGroup>
+                        <FormGroup controlId="formHorizontalEmail">
+                            <Col componentClass={ControlLabel} sm={4}>
+                                Short Name
+                            </Col>
+                            <Col sm={6}>
+                                <FormControl placeholder="Short Name" />
+                            </Col>
+                        </FormGroup>
+                        <FormGroup controlId="formHorizontalEmail">
+                            <Col componentClass={ControlLabel} sm={4}>
+                                Opening Date
+                            </Col>
+                            <Col sm={6}>
+                                <input type="date"/>
+                            </Col>
+                        </FormGroup>
+                     </Form>   
+                        
 
 
-                        <hr />
+                        
 
-                        <h4>Overflowing text to show scroll behavior</h4>
-                        <p>Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.</p>
-                        <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.</p>
-                        <p>Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.</p>
-                        <p>Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.</p>
-                        <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.</p>
-                        <p>Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.</p>
-                        <p>Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.</p>
-                        <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.</p>
-                        <p>Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.</p>
                     </Modal.Body>
                     <Modal.Footer>
+                        <Button
+                            onClick={() => {this.props.addNewOganisationUnit("A Name", "A short Name", adate)}}
+                        >Submit</Button>
                         <Button
                             onClick={() => {this.props.showAddOrgModal(false)}}
                         >Close</Button>
@@ -67,7 +85,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
 
-        showAddOrgModal: b => dispatch(showAddOrgModal(b))
+        showAddOrgModal: b => dispatch(showAddOrgModal(b)),
+        addNewOganisationUnit: (name, shortName, openingDate) => dispatch(addNewOganisationUnit(name, shortName, openingDate))
         
     }
 };

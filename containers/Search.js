@@ -1,86 +1,217 @@
 /**
  * Created by erlend on 09.11.2016.
  */
-import { Button,Table,Navbar,Nav,NavItem,Form,ControlLabel, NavDropdown, FormGroup,FormControl, NavbarBrand, MenuItem, DropdownButton, Well, Panel} from 'react-bootstrap';
+import { Button,Table,Navbar,Nav,NavItem,Form,ControlLabel, NavDropdown, FormGroup,FormControl, NavbarBrand, MenuItem, DropdownButton, Well, Panel, ButtonGroup} from 'react-bootstrap';
 import React from 'react'
+import ReactDOM from 'react-dom';
 import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
-import {recievedOrganisations, fetchOrganisations, findMatchingElements, getLocation, changeLevel, showAddOrgModal} from '../actions/actions'
+import {recievedOrganisations, fetchOrganisations, findMatchingElements, getLocation, changeLevel, showAddOrgModal, showDistrictBorder, showChiefdomBorder, showNoBorder} from '../actions/actions'
 import List from './List';
 import {Gmaps, Marker, InfoWindow, Circle, Polygon} from 'react-gmaps';
+import {initMap} from './mapfunctions.js'
+import jquery from 'jquery'
+import loadGoogleMapsAPI from 'load-google-maps-api';
 
-
-const coords = {
-  lat: 8.48059,
-  lng: -11.8085401
-};
-const test =[
-  {lat: 25.774, lng: -80.190},
-  {lat: 18.466, lng: -66.118},
-  {lat: 32.321, lng: -64.757}
-];
-
-var w = window.innerWidth - window.innerWidth/3;
-var h = window.innerHeight - 85;
-const color = '#FF0000';
-var markerImg= 'containers/marker.png';
+var markerImg = 'containers/marker.png';
+var map;
+var chiefdomPolygons = [];
+var districtPolygons = [];
+var singlePolygons = [];
 
 class Search extends React.Component {
 
-    componentWillMount(){
-        this.props.fetchOrganisations()
-    }
+    componentDidMount(){
 
-    onItemClick(item, parent) {
-        console.log(parent);
-        console.log(item.displayName)
-        parent.getLocation(item.displayName, item);   
-    }
-    onMapCreated(m){
-        console.log(m);
-        console.log(Gmaps);
-        var myLatlng = new google.maps.LatLng(-25.363882,131.044922);
+        // Options for the Google Maps API
+        var gooogleOptions ={
+            key: "AIzaSyDtsokboJ-exluz1PyeU6YrsEAoQSRvaDo"
+        }
 
-        var marker = new google.maps.Marker({
-            position: myLatlng,
-            title:"Hello World!"
+        // Load the Google Maps script
+        loadGoogleMapsAPI(gooogleOptions).then((googleMaps) => {
+
+            //init the map
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 8,
+                center: {lat: 8.48059, lng: -11.8085401},
+                mapTypeId: 'terrain'
+            });
+
+            map.props = this.props;
+
+            // Add listner for clicks on the map
+            google.maps.event.addListener(map,'click', function(event) {
+                this.props.showAddOrgModal(true);
+                console.log(this.props);
+                /*var marker = new google.maps.Marker({
+                    position: event.latLng,
+                    label: "new marker",
+                    map: map
+                });*/
+            });
+
+            // Get all organisational units
+            this.props.fetchOrganisations(map);
+
+        }).catch((err) => {
+          console.error(err);
         });
+    }
 
-        // To add the marker to the map, call setMap();
-        marker.setMap(m);
+    onItemClick(item, parent, map, singles) {
+
+        /*
+        A functions which displays properties of a
+        organisational unit on the map when selected 
+        by the user in the results list. 
+
+        The function draws the borders of a district
+        or a chiefdom and displays a facility as a 
+        marker.
+        */
+
+        // Show a facility
+        if(item.level == 4){
+
+            // If the API don't have coordinates for the facility
+            if(item.coordinatesObject == undefined){
+                window.alert("DHIS2 does not have coordinates for this unit");
+                return;
+            }
+
+            // Taking into account that some organisational
+            // units have invalid parent data
+            var district = " ";
+            var chiefdom = " ";
+
+            if(item.parent != undefined)
+                chiefdom = item.parent.displayName;
+                if(item.parent.parent != undefined)
+                    district = item.parent.parent.displayName
+            
+            // Text for info window
+            var info =  '<div id="content">'+
+                            '<div id="siteNotice">'+
+                            '</div>'+
+                            '<h2 id="secondHeading" class="secondHeading">'+ item.displayName+'</h2>'+
+                            '<div id="bodyContent">'+
+                            '<p><b>Chiefdom: </b>'+ chiefdom + 
+                            '<p><b>District: </b>'+ district + 
+                            '</p>'+
+                            '</div>'+
+                        '</div>';
+
+            // Creates the marker
+            var marker = new google.maps.Marker({
+              position: item.coordinatesObject[0],
+              label: item.displayName,
+              map: map
+            });
+
+            // Create an info window for the marker
+            var infowindow = new google.maps.InfoWindow({
+                content: info
+            });
+
+            // Add listener to marker so info window is displayed if marker is clicked
+            marker.addListener('click', function() {
+                infowindow.open(map, marker);
+            });
+
+        }
+
+        // Show a Chiefdoms border
+        else if(item.level == 3){
+            
+            // Remove existing polygons
+            parent.showNoBorders(parent, map, singles);
+
+            // Create new polygon
+            var chiefdomBorder = new google.maps.Polygon({
+                paths: item.coordinatesObject,
+                strokeColor: '#008822',
+                strokeOpacity: 1,
+                strokeWeight: 1,
+                fillColor: '#008822',
+                fillOpacity: 0.20
+            });
+
+            // Is visible
+            chiefdomBorder.setMap(map);
+
+            // Add polygon to array to keep track
+            singlePolygons.push(chiefdomBorder);
+        }
+
+        // Show a Districts border
+        else if(item.level == 2){
+            
+            // We don't want to remove existing single chiefdoms, user might want to see in which district said chiefdom is located.
+            var newSingles = []
+            singles.forEach(function(single){
+                if(single.type == "district")
+                    newSingles.push(single)
+            });
+
+            // Remove polygons
+            parent.showNoBorders(parent, map, newSingles);
+
+            // Create new polygon
+            var districtBorder = new google.maps.Polygon({
+                paths: item.coordinatesObject,
+                strokeColor: '#FF0000',
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: '#FF0000',
+                fillOpacity: 0.25,
+                type: "district"
+            });
+
+            // Is visible
+            districtBorder.setMap(map);
+
+            // Add polygon to array to keep track
+            singlePolygons.push(districtBorder);
+        }  
     }
 
     render() {
-        
-
-        return (
-            
+        return (       
             <div id="wrapper">
                 <div id="search">
                     <div id="filter">
                         <Well>
-                            <ControlLabel>Filter:</ControlLabel><br/>
-                            <select id="select" onChange={(e) => this.props.changeLevel(e,this.props.search,this.props.organisations)} defaultValue="">
-                                <option value="" disabled>Level--</option>
-                                <option value="5">All levels</option>
-                                <option value="2">District</option>
-                                <option value="3">Chiefdoms</option>
-                                <option value="4">Facilities</option>
-                            </select>
+                            <div>
+                                <Button
+                                    bsStyle="success"
+                                    bsSize="small"
+                                    onClick={() => {this.props.showAddOrgModal(true)}}
+                                    id="new-button"
+                                >
+                                    + New Unit
+                                </Button>
+                                <ControlLabel>Show borders:</ControlLabel><br/>
+                                <ButtonGroup id="border-buttons">
+                                    <Button onClick={() => {this.props.showNoBorders(this.props, map, singlePolygons)}}>None</Button>
+                                    <Button onClick={() => {this.props.showDistrictBorders(this.props, map, singlePolygons)}}>Districts</Button>
+                                    <Button onClick={() => {this.props.showChiefdomBorders(this.props, map, singlePolygons)}}>Chiefdoms</Button>
+                                </ButtonGroup><br/>
+                                <ControlLabel>Filter:</ControlLabel><br/>
+                                <select id="select" onChange={(e) => this.props.changeLevel(e,this.props.search,this.props.organisations)} defaultValue="">
+                                    <option value="" disabled>Level--</option>
+                                    <option value="5">All levels</option>
+                                    <option value="2">District</option>
+                                    <option value="3">Chiefdoms</option>
+                                    <option value="4">Facilities</option>
+                                </select><br/>
+                            </div>
+                    
                             <FormControl
                                 type="text"
                                 placeholder="Search Organisation Units..."
                                 onChange={ (text) => { this.props.findMatchingElements( this.props.organisations, text) }}
                             />
-
-                            <Button
-                                bsStyle="primary"
-                                bsSize="large"
-                                onClick={() => {this.props.showAddOrgModal(true)}}
-                            >
-                                Launch demo modal
-                            </Button>
-
                         </Well>
                     </div>                 
                     <div id="results">
@@ -90,37 +221,12 @@ class Search extends React.Component {
                                 onItemClick={this.onItemClick}
                                 organisations={this.props.search}
                                 props={this.props}
+                                map={map}
+                                singles ={singlePolygons}
                             />
                             </div>
                         </Panel>
                     </div>
-
-                </div>
-                <div id="map">
-                    <Gmaps
-                        width={w}
-                        height={h}
-                        lat={coords.lat}
-                        lng={coords.lng}
-                        zoom={8}
-                        loadingMessage={'¨Reacting to DHIS'}
-                        params={{v: '3.exp', key: 'AIzaSyDtsokboJ-exluz1PyeU6YrsEAoQSRvaDo'}}
-                        onMapCreated={this.onMapCreated}>
-                        onClick={this.click}
-                        {this.props.markers.map((m,i) => <Marker key={i} lat={m.lat} lng={m.lng} icon={markerImg}/>)}
-
-                        <InfoWindow
-                            lat={coords.lat}
-                            lng={coords.lng}
-                            content={'hello'}
-                            onCloseClick={this.onCloseClick} />
-                        <Circle
-                            lat={coords.lat}
-                            lng={coords.lng}
-                            radius={500}
-                            onClick={this.onClick} />
-                        
-                    </Gmaps>  
                 </div>
             </div>
         );
@@ -132,21 +238,25 @@ const mapStateToProps = (state) => {
         organisations: state.organisations,
         search: state.search,
         markers: state.markers,
-        ui : state.ui
-
+        ui : state.ui,
+        chiefdomBorders: state.chiefdomBorder,
+        districtBorders: state.districtBorder,
+        chiefdomBorderPolygons: state.chiefdomBorderPolygon,
+        districtBorderPolygons: state.districtBorderPolygon
     }
-
 };
 
 const mapDispatchToProps = (dispatch) => {
     return {
         recievedOrganisations: payload => dispatch(recievedOrganisations(payload)),
-        fetchOrganisations : () => dispatch(fetchOrganisations()), 
+        fetchOrganisations : (map) => dispatch(fetchOrganisations(map)), 
         findMatchingElements : (data, search) => dispatch(findMatchingElements(data, search)),
         getLocation: name => dispatch(getLocation(name)),
         changeLevel: (level, search, organisations) => dispatch(changeLevel(level, search, organisations)),
-        showAddOrgModal: b => dispatch(showAddOrgModal(b))
-
+        showAddOrgModal: b => dispatch(showAddOrgModal(b)),
+        showDistrictBorders: (props, map, singlePolys) => dispatch(showDistrictBorder(props, map, singlePolys)),
+        showChiefdomBorders: (props, map, singlePolys) => dispatch(showChiefdomBorder(props, map, singlePolys)),
+        showNoBorders: (props, map, singlePolys) => dispatch(showNoBorder(props, map, singlePolys))
     }
 };
 
