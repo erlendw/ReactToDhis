@@ -6,7 +6,7 @@ import React from 'react'
 import ReactDOM from 'react-dom';
 import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
-import {recievedOrganisations, fetchOrganisations, findMatchingElements, getLocation, changeLevel, showAddOrgModal, showDistrictBorder, showChiefdomBorder, showNoBorder, createChildPolygon} from '../actions/actions'
+import {recievedOrganisations, fetchOrganisations, findMatchingElements, getLocation, changeLevel, showAddOrgModal, showDistrictBorder, showChiefdomBorder, showNoBorder, createChildPolygon, updateSearch} from '../actions/actions'
 import List from './List';
 import {Gmaps, Marker, InfoWindow, Circle, Polygon} from 'react-gmaps';
 import {initMap} from './mapfunctions.js'
@@ -63,6 +63,9 @@ class Search extends React.Component {
             // Get all organisational units
             this.props.fetchOrganisations(map).
             then(() => {
+                var e = {target: {value: 2}};
+                this.props.changeLevel(e,this.props.search,this.props.organisations);
+                
                 this.setState({
                     isLoading: false
                 });
@@ -244,11 +247,12 @@ class Search extends React.Component {
     render() {
         return (       
             <div id="wrapper">
+                
                 <div id="search">
                     <div id="filter">
                         <Well>
                             
-                            <ControlLabel>Show borders:</ControlLabel><br/>
+                            <ControlLabel>Show border overlays:</ControlLabel><br/>
                             <ButtonGroup id="border-buttons">
                                 <Button onClick={() => {this.props.showNoBorders(this.props, map, singlePolygons)}}>None</Button>
                                 <Button onClick={() => {this.props.showDistrictBorders(this.props, map, singlePolygons)}}>Districts</Button>
@@ -272,7 +276,7 @@ class Search extends React.Component {
                             />
                             
                             <ControlLabel id="results-label">Results:</ControlLabel><br/>
-                            {this.state.isLoading ? <div>Loading data from DHIS2 ... <br/> </div> : <div></div>}
+                            {this.state.isLoading ? <div id="loading"><div id="inner-loading"><h1>Loading data from DHIS2 ...</h1></div></div> : <div></div>}
                             <div id="results-wrapper">
                                 <List
                                     onItemClick={this.onItemClick}
@@ -315,7 +319,8 @@ const mapDispatchToProps = (dispatch) => {
         showDistrictBorders: (props, map, singlePolys) => dispatch(showDistrictBorder(props, map, singlePolys)),
         showChiefdomBorders: (props, map, singlePolys) => dispatch(showChiefdomBorder(props, map, singlePolys)),
         showNoBorders: (props, map, singlePolys) => dispatch(showNoBorder(props, map, singlePolys)),
-        createChildPolygon: (cords, map, child) => dispatch(createChildPolygon(cords,map, child))
+        createChildPolygon: (cords, map, child) => dispatch(createChildPolygon(cords,map, child)),
+        updateSearch: (data) => dispatch(updateSearch(data))
     }
 };
 

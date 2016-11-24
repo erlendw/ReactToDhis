@@ -29,15 +29,21 @@ class Header extends React.Component {
                 <Navbar collapseOnSelect>
                     <Navbar.Header>
                         <Navbar.Brand>
-                            <a href="#">Forget about dhis</a>
+                            <a href="#">React To DHIS</a>
                         </Navbar.Brand>
                         <Navbar.Toggle />
                     </Navbar.Header>
                     <Navbar.Collapse>
                         <Nav>
-                            <NavItem eventKey={1} href="#">REACTing to YOUR FACE or something, I don't know</NavItem>
+                            <NavItem eventKey={1} href="#">Browse the Organisation Units in DHIS2</NavItem>
+                            
                             
                         </Nav>
+
+                        <Nav pullRight>
+                            <NavItem eventKey={1} href="#">Help</NavItem>
+                        </Nav>
+
                     </Navbar.Collapse>
                 </Navbar>
             </div>

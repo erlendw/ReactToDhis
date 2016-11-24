@@ -7,7 +7,7 @@ import Axios from 'axios'
 import async from 'async'
 
 // https://play.dhis2.org/demo/api/organisationUnits.json?filter=id:eq:vWbkYPRmKyS&fields=id,displayName,level,coordinates,children&paging=false&level=3
-const serverUrl = 'https://play.dhis2.org/test/api/organisationUnits.json?fields=id,displayName,level,coordinates,parent[displayName,parent[displayName]],children[displayName,coordinates,level,children[displayName]]&paging=false';
+const serverUrl = 'https://play.dhis2.org/test/api/organisationUnits.json?fields=id,displayName,level,coordinates,parent[displayName,parent[displayName]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
 //const shortServerUrl = 'https://play.dhis2.org/test/api/organisationUnits';
 //const serverUrl = 'https://play.dhis2.org/test/api/organisationUnits.json?filter=id:eq:vWbkYPRmKyS&fields=coordinates,displayName';
 
@@ -128,15 +128,36 @@ export const addDistrictBorderPolygon = (cords, item, map, dispatch) => {
         districtBorder.fillOpacity = 0;
         map.setZoom(9);
         map.setCenter(item.centerCoordinates);
+
+        var newSearch = [];
+
         item.children.forEach((child) => {
-            var j = JSON.parse(child.coordinates);
-           // console.log(j);
-           
-            for(var i = 0; i < j.length; i+=1){
-                dispatch(createChildPolygon(j[i],map, child));
-            }               
-            
+            if(child != undefined ){
+                if(child.coordinates != undefined){
+                    
+                    var j = JSON.parse(child.coordinates);
+
+                    for(var i = 0; i < j.length; i+=1){
+                        if(j[i].length != undefined){
+                            
+                            if(j[0][0].length < 7 && j.length == 1){
+                                console.log(child.displayName);
+                            }
+                            else{
+                                dispatch(createChildPolygon(j[i],map, child));
+                            }
+                        }
+                    }
+                                 
+                    if(child.parent == undefined)
+                        child.parent = {displayName: "no parent", parent: {displayName: "no parent"}}
+                    
+                    newSearch.push(child);
+                }
+            }
         });
+        console.log(newSearch)
+        dispatch(updateSearch(newSearch));
         
     });
     return {
@@ -151,6 +172,9 @@ export const createChildPolygon = (childCords, map, child) =>{
 
     var bounds = new google.maps.LatLngBounds();
     var temp = [];
+
+    
+   
 
     childCords.forEach((c) => {
         c.forEach((subC)=>{
@@ -284,6 +308,7 @@ export const findMatchingElements = (data, search) => {
 
 export const changeLevel = (e , data, all) => {
     return(dispatch) => {
+        console.log(e);
         var satan = [];
         if(e.target.value == 5){
             dispatch(updateSearch(all));
@@ -308,7 +333,9 @@ export const showDistrictBorder = (props, map, singles) => {
         });
 
         props.districtBorderPolygons.forEach(function(dbp){
-            dbp.setMap(map);             
+            dbp.setMap(map);        
+            dbp.fillOpacity = 0.2;     
+            console.log(dbp);
         });
         props.chiefdomBorderPolygons.forEach(function(dbp){
             dbp.setMap(null);             
@@ -345,7 +372,8 @@ export const showNoBorder = (props, map, singles) => {
             poly.setMap(null);
         });
         props.districtBorderPolygons.forEach(function(dbp){
-            dbp.setMap(null);             
+            dbp.setMap(null);   
+            dbp.fillOpacity = 0.2;            
         });
         props.chiefdomBorderPolygons.forEach(function(dbp){
             dbp.setMap(null);             

@@ -7,6 +7,7 @@ export function List({ organisations = [], onItemClick, props, map, singles}) {
 
     const listItems = organisations
         .map((organisation,i) => {
+            //console.log(organisations);
             if(organisation.level == 1){
                 return (
                 <Panel header={organisation.displayName} eventKey={i} key={i}>
