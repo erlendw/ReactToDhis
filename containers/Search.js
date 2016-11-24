@@ -1,12 +1,12 @@
 /**
  * Created by erlend on 09.11.2016.
  */
-import { Button,Table,Navbar,Nav,NavItem,Form,ControlLabel, NavDropdown, FormGroup,FormControl, NavbarBrand, MenuItem, DropdownButton, Well, Panel, ButtonGroup} from 'react-bootstrap';
+import { Button,Table,Navbar,Nav,NavItem,Form,ControlLabel, NavDropdown, FormGroup,FormControl, NavbarBrand, MenuItem, DropdownButton, Well, Panel, ButtonGroup, hr} from 'react-bootstrap';
 import React from 'react'
 import ReactDOM from 'react-dom';
 import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
-import {recievedOrganisations, fetchOrganisations, findMatchingElements, getLocation, changeLevel, showAddOrgModal, showDistrictBorder, showChiefdomBorder, showNoBorder} from '../actions/actions'
+import {recievedOrganisations, fetchOrganisations, findMatchingElements, getLocation, changeLevel, showAddOrgModal, showDistrictBorder, showChiefdomBorder, showNoBorder, createChildPolygon} from '../actions/actions'
 import List from './List';
 import {Gmaps, Marker, InfoWindow, Circle, Polygon} from 'react-gmaps';
 import {initMap} from './mapfunctions.js'
@@ -20,9 +20,18 @@ var districtPolygons = [];
 var singlePolygons = [];
 
 class Search extends React.Component {
+    constructor(props, context) {
+        super(props, context);
+
+        // Set some initial state variables that are used within the component
+        this.state = {
+            isSaving: false,
+            isLoading: true
+        };
+    }
 
     componentDidMount(){
-
+        console.log(this);
         // Options for the Google Maps API
         var gooogleOptions ={
             key: "AIzaSyDtsokboJ-exluz1PyeU6YrsEAoQSRvaDo"
@@ -52,7 +61,12 @@ class Search extends React.Component {
             });
 
             // Get all organisational units
-            this.props.fetchOrganisations(map);
+            this.props.fetchOrganisations(map).
+            then(() => {
+                this.setState({
+                    isLoading: false
+                });
+            });
 
         }).catch((err) => {
           console.error(err);
@@ -121,11 +135,26 @@ class Search extends React.Component {
 
         }
 
-        // Show a Chiefdoms border
+        // Show a Chiefdoms border and give it an info window
         else if(item.level == 3){
             
             // Remove existing polygons
             parent.showNoBorders(parent, map, singles);
+
+            // Content for info window
+            var info =  '<div id="content">'+
+                    '<div id="siteNotice">'+
+                    '</div>'+
+                    '<h2 id="secondHeading" class="secondHeading">'+ item.displayName+'</h2>'+
+                    '<div id="bodyContent">'+
+                    '<p><b>Facilities in this Chiefdom: </b></p>'+
+                    '<p>';
+
+            item.children.forEach((child) => {
+                info += child.displayName + '<br/>'
+            });
+
+            info += '</p>'+'</div>'+'</div>';
 
             // Create new polygon
             var chiefdomBorder = new google.maps.Polygon({
@@ -134,11 +163,23 @@ class Search extends React.Component {
                 strokeOpacity: 1,
                 strokeWeight: 1,
                 fillColor: '#008822',
-                fillOpacity: 0.20
+                fillOpacity: 0.20,
+                map: map
             });
 
-            // Is visible
-            chiefdomBorder.setMap(map);
+            // Create the info window
+            var infowindow = new google.maps.InfoWindow({
+                content: info,
+                position: bounds.getCenter()
+            });
+
+            // Add a listene to the polygon so when clicked it 
+            // zooms in and displays the info window
+            chiefdomBorder.addListener('click', function(event) {
+                map.setZoom(10);
+                map.setCenter(bounds.getCenter());
+                infowindow.open(map);
+            });
 
             // Add polygon to array to keep track
             singlePolygons.push(chiefdomBorder);
@@ -165,11 +206,35 @@ class Search extends React.Component {
                 strokeWeight: 2,
                 fillColor: '#FF0000',
                 fillOpacity: 0.25,
-                type: "district"
+                type: "district",
+                map: map
             });
 
-            // Is visible
-            districtBorder.setMap(map);
+            districtBorder.addListener('click', function(event) {
+                console.log(districtBorder);
+                districtBorder.setMap(null);
+                map.setZoom(9);
+                map.setCenter(item.centerCoordinates);
+                item.children.forEach((child) => {
+                    if(child.coordinates != undefined){
+                        
+                        var j = JSON.parse(child.coordinates);
+                        
+                        for(var i = 0; i < j.length; i+=1){
+                            if(typeof j[i] != "number"){                           
+                                j[i].forEach((c) => {
+                                    if(c.length > 6){
+                                        createChildPolygon(j[i],map, child);
+                                    }
+                                });
+                            }   
+                        }                      
+                    }
+                                  
+                    
+                });
+                
+            });
 
             // Add polygon to array to keep track
             singlePolygons.push(districtBorder);
@@ -182,51 +247,44 @@ class Search extends React.Component {
                 <div id="search">
                     <div id="filter">
                         <Well>
-                            <div>
-                                <Button
-                                    bsStyle="success"
-                                    bsSize="small"
-                                    onClick={() => {this.props.showAddOrgModal(true)}}
-                                    id="new-button"
-                                >
-                                    + New Unit
-                                </Button>
-                                <ControlLabel>Show borders:</ControlLabel><br/>
-                                <ButtonGroup id="border-buttons">
-                                    <Button onClick={() => {this.props.showNoBorders(this.props, map, singlePolygons)}}>None</Button>
-                                    <Button onClick={() => {this.props.showDistrictBorders(this.props, map, singlePolygons)}}>Districts</Button>
-                                    <Button onClick={() => {this.props.showChiefdomBorders(this.props, map, singlePolygons)}}>Chiefdoms</Button>
-                                </ButtonGroup><br/>
-                                <ControlLabel>Filter:</ControlLabel><br/>
-                                <select id="select" onChange={(e) => this.props.changeLevel(e,this.props.search,this.props.organisations)} defaultValue="">
-                                    <option value="" disabled>Level--</option>
-                                    <option value="5">All levels</option>
-                                    <option value="2">District</option>
-                                    <option value="3">Chiefdoms</option>
-                                    <option value="4">Facilities</option>
-                                </select><br/>
-                            </div>
+                            
+                            <ControlLabel>Show borders:</ControlLabel><br/>
+                            <ButtonGroup id="border-buttons">
+                                <Button onClick={() => {this.props.showNoBorders(this.props, map, singlePolygons)}}>None</Button>
+                                <Button onClick={() => {this.props.showDistrictBorders(this.props, map, singlePolygons)}}>Districts</Button>
+                                <Button onClick={() => {this.props.showChiefdomBorders(this.props, map, singlePolygons)}}>Chiefdoms</Button>
+                            </ButtonGroup><br/>
+                            
+                            <ControlLabel>Search:</ControlLabel><br/>
+                            <select id="select" onChange={(e) => this.props.changeLevel(e,this.props.search,this.props.organisations)} defaultValue="2">
+                                <option value="" disabled>Filter levels--</option>
+                                <option value="5">All levels</option>
+                                <option value="2">District</option>
+                                <option value="3">Chiefdoms</option>
+                                <option value="4">Facilities</option>
+                            </select><br/>
+                            
                     
                             <FormControl
                                 type="text"
                                 placeholder="Search Organisation Units..."
                                 onChange={ (text) => { this.props.findMatchingElements( this.props.organisations, text) }}
                             />
+                            
+                            <ControlLabel id="results-label">Results:</ControlLabel><br/>
+                            {this.state.isLoading ? <div>Loading data from DHIS2 ... <br/> </div> : <div></div>}
+                            <div id="results-wrapper">
+                                <List
+                                    onItemClick={this.onItemClick}
+                                    organisations={this.props.search}
+                                    props={this.props}
+                                    map={map}
+                                    singles ={singlePolygons}
+                                />
+                            </div>
+                            
                         </Well>
                     </div>                 
-                    <div id="results">
-                        <Panel header="Results:">
-                            <div id="results-wrapper">
-                            <List
-                                onItemClick={this.onItemClick}
-                                organisations={this.props.search}
-                                props={this.props}
-                                map={map}
-                                singles ={singlePolygons}
-                            />
-                            </div>
-                        </Panel>
-                    </div>
                 </div>
             </div>
         );
@@ -256,7 +314,8 @@ const mapDispatchToProps = (dispatch) => {
         showAddOrgModal: b => dispatch(showAddOrgModal(b)),
         showDistrictBorders: (props, map, singlePolys) => dispatch(showDistrictBorder(props, map, singlePolys)),
         showChiefdomBorders: (props, map, singlePolys) => dispatch(showChiefdomBorder(props, map, singlePolys)),
-        showNoBorders: (props, map, singlePolys) => dispatch(showNoBorder(props, map, singlePolys))
+        showNoBorders: (props, map, singlePolys) => dispatch(showNoBorder(props, map, singlePolys)),
+        createChildPolygon: (cords, map, child) => dispatch(createChildPolygon(cords,map, child))
     }
 };
 

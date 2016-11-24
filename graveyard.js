@@ -201,3 +201,5 @@ export const getLocation = (name, organisation) => {
                         />
                         <ControlLabel>Opening Date</ControlLabel>
                         <input type="date" />
+
+<img src="containers/spinner.gif"></img>

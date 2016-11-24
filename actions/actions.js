@@ -124,9 +124,8 @@ export const addDistrictBorderPolygon = (cords, item, map, dispatch) => {
     });
 
     districtBorder.addListener('click', function(event) {
-   
-        //console.log("fart");
-        //console.log(item.centerCoordinates);
+        
+        districtBorder.fillOpacity = 0;
         map.setZoom(9);
         map.setCenter(item.centerCoordinates);
         item.children.forEach((child) => {
@@ -149,9 +148,10 @@ export const addDistrictBorderPolygon = (cords, item, map, dispatch) => {
 
 export const createChildPolygon = (childCords, map, child) =>{
 
+
     var bounds = new google.maps.LatLngBounds();
     var temp = [];
-    //console.log(j[i]);
+
     childCords.forEach((c) => {
         c.forEach((subC)=>{
         
@@ -175,20 +175,17 @@ export const createChildPolygon = (childCords, map, child) =>{
                     '<p>';
 
     child.children.forEach((child) => {
-        console.log(child.displayName);
         info += child.displayName + '<br/>'
     });
 
     info += '</p>'+'</div>'+'</div>';
-    //console.log(temp);
-    
                               
 
     var chiefdomBorder = new google.maps.Polygon({
         paths: temp,
         strokeColor: '#008822',
         strokeOpacity: 0.8,
-        strokeWeight: 1,
+        strokeWeight: 2,
         fillColor: '#008822',
         fillOpacity: 0.2,
         map: map,
@@ -211,7 +208,22 @@ export const createChildPolygon = (childCords, map, child) =>{
     }
 }
 
-export const addChiefdomBorderPolygon = (cords) => {
+export const addChiefdomBorderPolygon = (cords, item, map) => {
+
+    var info =  '<div id="content">'+
+                    '<div id="siteNotice">'+
+                    '</div>'+
+                    '<h2 id="secondHeading" class="secondHeading">'+ item.displayName+'</h2>'+
+                    '<div id="bodyContent">'+
+                    '<p><b>Facilities in this Chiefdom: </b></p>'+
+                    '<p>';
+
+    item.children.forEach((child) => {
+        info += child.displayName + '<br/>'
+    });
+
+    info += '</p>'+'</div>'+'</div>';
+
     var chiefdomBorder = new google.maps.Polygon({
         paths: cords,
         strokeColor: '#008822',
@@ -220,6 +232,18 @@ export const addChiefdomBorderPolygon = (cords) => {
         fillColor: '#008822',
         fillOpacity: 0.20
     });
+
+    var infowindow = new google.maps.InfoWindow({
+        content: info,
+        position: item.centerCoordinates
+    });
+
+    chiefdomBorder.addListener('click', function(event) {
+        map.setZoom(10);
+        map.setCenter(item.centerCoordinates);
+        infowindow.open(map);
+    });
+
     return {
         type: 'ADD_CHIEFDOM_BORDER_POLYGON',
         chiefdomBorder
@@ -277,7 +301,6 @@ export const changeLevel = (e , data, all) => {
 
 
 export const showDistrictBorder = (props, map, singles) => {
-    console.log(props.chiefdomBorderPolygons.length);
     return(dispatch) => {
         singles.forEach(function(poly){
             if(poly.type == "district")
@@ -316,7 +339,6 @@ export const showChiefdomBorder = (props, map, singles) => {
 };
 
 export const showNoBorder = (props, map, singles) => {
-    console.log(props.chiefdomBorderPolygons);
 
     return(dispatch) => {
         singles.forEach(function(poly){
@@ -421,7 +443,7 @@ export const fetchOrganisations = (map) => {
                         var bounds = new google.maps.LatLngBounds();
                   
                         if(j[0][0] == undefined){
-
+                         
                             var ut = {                                                        
                                 lng: j[0],
                                 lat: j[1]
@@ -434,8 +456,10 @@ export const fetchOrganisations = (map) => {
                                 dispatch(getLocationSuccess(ut, map, organisation));                      
                         }
                         else{
+                            i
                             var ut={};
-                            if(typeof j[0] == "string" && j.length == 2){                           
+                            if(typeof j[0] == "string" && j.length == 2){    
+                                                   
                                 ut = {
                                     lng: Number(j[0]),
                                     lat: Number(j[1])
@@ -466,13 +490,13 @@ export const fetchOrganisations = (map) => {
                                 array.forEach((section) =>{
                                     if(section.length > 6){
                                         dispatch(getChiefdomBorderSuccess(section)); 
-                                        dispatch(addChiefdomBorderPolygon(section));
+                                        organisation.centerCoordinates = bounds.getCenter();
+                                        dispatch(addChiefdomBorderPolygon(section, organisation, map));
                                     }
                                 });                                           
                             }
                             else if(organisation.level == 2){
                                 array.forEach((section) =>{
-                                    //console.log(section);
                                     dispatch(getDistrictBorderSuccess(section)); 
                                     dispatch(addDistrictBorderPolygon(section, organisation, map, dispatch));
                                 });                               

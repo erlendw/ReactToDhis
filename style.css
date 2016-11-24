@@ -46,3 +46,10 @@ a{
 #new-button{
 	float:right;
 }
+.t{
+	font-size: 10px;
+}
+#results-label{
+	margin-top: 20px;
+	margin-bottom: 15px;
+}
