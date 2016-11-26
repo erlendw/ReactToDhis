@@ -5,6 +5,7 @@
 import btoa from 'btoa'
 import Axios from 'axios'
 import async from 'async'
+import superagent from 'superagent'
 
 // https://play.dhis2.org/demo/api/organisationUnits.json?filter=id:eq:vWbkYPRmKyS&fields=id,displayName,level,coordinates,children&paging=false&level=3
 const serverUrl = 'https://play.dhis2.org/test/api/organisationUnits.json?fields=id,displayName,level,coordinates,parent[displayName,parent[displayName]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
@@ -456,6 +457,30 @@ export const addNewOganisationUnit = (name, shortName, date) =>{
     }
 };
 */
+
+export const addNewOganisationUnit = (name, shortName, date) =>{
+
+    console.log(name, shortName, date);
+
+    return (dispatch) => {
+
+        var data = {"name":name, "shortName":shortName, "openingDate":date, "level":"4"}
+
+        superagent.post('http://localhost:8080/api/organisationUnits')
+            .send(data)
+            .set('Authorization', basicAuth)
+            .set('Accept', 'application/json')
+            .end(function(err, response){
+                console.log(response);
+
+            });
+
+    }
+
+};
+
+
+
 export const fetchOrganisations = (map) => {
    
     return (dispatch) => {
