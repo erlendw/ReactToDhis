@@ -93,9 +93,19 @@ class Search extends React.Component {
         The function draws the borders of a district
         or a chiefdom and displays a facility as a 
         marker.
+        element.style.display = 'none';           // Hide
+        element.style.display = 'block';          // Show
+        element.style.display = 'inline';         // Show
+        element.style.display = 'inline-block';   // Show
         */
 
         // Show a facility
+
+        var element = document.getElementById(item.id);
+        element.style.display = 'block';          // Show
+        element.style.display = 'inline';         // Show
+        element.style.display = 'inline-block';   // Show
+        console.log(element);
 
         if(item.displayName == "name new reacttodhis"){
             var d = new Date();

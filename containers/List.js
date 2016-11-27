@@ -7,51 +7,24 @@ export function List({ organisations = [], onItemClick, props, map, singles}) {
 
     const listItems = organisations
         .map((organisation,i) => {
-            //console.log(organisations);
-            if(organisation.level == 1){
-                return (
-                <Panel header={organisation.displayName} eventKey={i} key={i}>
-                    <ControlLabel>Type: </ControlLabel><p>Database</p>
-                    <ControlLabel>Id: </ControlLabel><p>{organisation.id}</p>
-                    <Button  onClick={() => onItemClick(organisation, props, map, singles)}>Show on Map</Button>
-                </Panel>
-            );
-            } 
-            else if(organisation.level == 2){
-                return (
-                <Panel header={organisation.displayName} eventKey={i} key={i}>
-                    <ControlLabel>Type: </ControlLabel><p>District</p>
-                    <ControlLabel>Id: </ControlLabel><p>{organisation.id}</p>
-                    <Button  onClick={() => onItemClick(organisation, props, map, singles)}>Show on Map</Button>
-                </Panel>
-            );
-            }  
-            else if(organisation.level == 3){
-                return (
-                <Panel header={organisation.displayName} eventKey={i} key={i}>
-                    <ControlLabel>Type: </ControlLabel><p>Chiefdom</p>
-                    <ControlLabel>Id: </ControlLabel><p>{organisation.id}</p>
-                    <ControlLabel>District: </ControlLabel><p>{organisation.parent.displayName}</p>
-                    <Button  onClick={() => onItemClick(organisation, props, map, singles)}>Show on Map</Button>
-                </Panel>
-            );
-            }         
-            return (
-                <Panel header={organisation.displayName} eventKey={i} key={i}>
-                    <ControlLabel>Type: </ControlLabel><p>Facility</p>
-                    <ControlLabel>Id: </ControlLabel><p>{organisation.id}</p>
-                    <ControlLabel>Chiefdom: </ControlLabel><p>{organisation.parent.displayName}</p>
+           return(
+            <li key={organisation.id}>
 
-                    <ControlLabel>District: </ControlLabel><p>{organisation.parent.parent.displayName}</p>
-                    <Button onClick={() => onItemClick(organisation, props, map, singles)}>Show on Map</Button>
-                </Panel>
+                <div>
+                    <a onClick={() => onItemClick(organisation, props, map, singles)}>{organisation.displayName}</a>
+                </div>
+                <div className="showhide" id={organisation.id}>
+                    {organisation.id}
+
+                </div>
+            </li>
             );
         });
 
     return (
-        <Accordion>
+       <ul>
         {listItems}
-        </Accordion>
+       </ul>
     );
 }
 

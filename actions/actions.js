@@ -359,14 +359,17 @@ export const updateDistrictBorderPolygons = (polys) => {
 
 export const findMatchingElements = (data, search) => {
     return(dispatch) => {
-        var satan = [];
-        data.forEach( (elem) =>
-        {
-            if(elem.displayName.toLowerCase().indexOf(search.target.value.toLowerCase()) !== -1 ){
-                satan.push(elem)
-            }
-        });
-        dispatch(updateSearch(satan))
+        console.log(search.target.value.length);
+        if(search.target.value.length > 4){
+            var satan = [];
+            data.forEach( (elem) =>
+            {
+                if(elem.displayName.toLowerCase().indexOf(search.target.value.toLowerCase()) !== -1 ){
+                    satan.push(elem)
+                }
+            });
+            dispatch(updateSearch(satan))
+        }
     }
 };
 
@@ -477,22 +480,7 @@ export const editOganisationUnit = (name, shortName, date, id) =>{
     return (dispatch) => {
         var levelll = 4;
 
-
         var datatosend = {"name":name, "shortName":shortName, "openingDate":date, "level":levelll, "displayName":name};
-        const fetchOptions2 = {
-            method: 'PUT',
-            headers: {
-                Authorization: basicAuth,
-                'Content-Type': 'application/json'
-            }
-        };
-         console.log(name, shortName, date, id);
-
-         Axios.put(dhisAPI + '/api/organisationUnits/' + id, datatosend,fetchOptions)
-            .then(response => {
-                console.log(response);
-            });
-
 
         superagent.put(dhisAPI + '/api/organisationUnits/' + id)
             .send(datatosend)
