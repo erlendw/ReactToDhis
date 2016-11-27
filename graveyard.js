@@ -203,3 +203,12 @@ export const getLocation = (name, organisation) => {
                         <input type="date" />
 
 <img src="containers/spinner.gif"></img>
+
+ <script>
+        var xhReq = new XMLHttpRequest();
+        xhReq.open("GET", "../manifest.webapp", false);
+        xhReq.send(null);
+        var serverResponse = JSON.parse(xhReq.responseText);
+        var dhisAPI = serverResponse.activities.dhis.href;
+        console.log(dhisAPI);
+    </script>

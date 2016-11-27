@@ -5,9 +5,12 @@
 import btoa from 'btoa'
 import Axios from 'axios'
 import async from 'async'
+import superagent from 'superagent'
 
 // https://play.dhis2.org/demo/api/organisationUnits.json?filter=id:eq:vWbkYPRmKyS&fields=id,displayName,level,coordinates,children&paging=false&level=3
-const serverUrl = 'https://play.dhis2.org/test/api/organisationUnits.json?fields=id,displayName,level,coordinates,parent[displayName,parent[displayName]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
+const serverUrl = dhisAPI + '/api/organisationUnits.json?fields=id,displayName,level,coordinates,parent[displayName,parent[displayName]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
+//const serverUrl = 'localhost:8080/api/organisationUnits.json?fields=id,displayName,level,coordinates,parent[displayName,parent[displayName]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
+
 //const shortServerUrl = 'https://play.dhis2.org/test/api/organisationUnits';
 //const serverUrl = 'https://play.dhis2.org/test/api/organisationUnits.json?filter=id:eq:vWbkYPRmKyS&fields=coordinates,displayName';
 
@@ -36,6 +39,60 @@ export const updateSearch = (data) => {
         payload: data
     }
 };
+
+export const createAllMarkers = (allFacilities, map) =>{
+
+    var allMarkers = [];
+    
+    allFacilities.forEach(function addAMarker(item){
+        var district = " ";
+        var chiefdom = " ";
+        
+
+        if(item.parent != undefined)
+            chiefdom = item.parent.displayName;
+            if(item.parent.parent != undefined)
+                district = item.parent.parent.displayName
+        
+        // Text for info window
+        var info =  '<div id="content">'+
+                        '<div id="siteNotice">'+
+                        '</div>'+
+                        '<h2 id="secondHeading" class="secondHeading">'+ item.displayName+'</h2>'+
+                        '<div id="bodyContent">'+
+                        '<p><b>Chiefdom: </b>'+ chiefdom + 
+                        '<p><b>District: </b>'+ district + 
+                        '</p>'+
+                        '</div>'+
+                    '</div>';
+
+        // Create the marker
+        var marker = new google.maps.Marker({
+            position: item.coordinatesObject[0],
+            icon: 'marker.png',
+            map: map
+        });
+
+        // Create an info window for the marker
+        var infowindow = new google.maps.InfoWindow({
+            content: info
+        });
+
+        // Add listener to marker so info window is displayed if marker is clicked
+        marker.addListener('click', function() {
+            infowindow.open(map, marker);
+        });
+
+        allMarkers.push(marker);
+    });
+    
+
+    return {
+        type: 'SET_ALL_MARKERS',
+        allMarkers
+    }
+
+}
 
 export const getLocationSuccess = (coordinates, map, item) => {
 
@@ -69,7 +126,7 @@ export const getLocationSuccess = (coordinates, map, item) => {
     // Create the marker
     var marker = new google.maps.Marker({
         position: coordinates,
-        icon: 'containers/marker.png',
+        icon: 'marker.png',
         map: map
     });
 
@@ -131,7 +188,7 @@ export const addDistrictBorderPolygon = (cords, item, map, dispatch) => {
 
         var newSearch = [];
 
-        item.children.forEach((child) => {
+        item.children.forEach(function eachChild(child){
             if(child != undefined ){
                 if(child.coordinates != undefined){
                     
@@ -157,7 +214,7 @@ export const addDistrictBorderPolygon = (cords, item, map, dispatch) => {
             }
         });
         console.log(newSearch)
-        dispatch(updateSearch(newSearch));
+       // dispatch(updateSearch(newSearch));
         
     });
     return {
@@ -456,19 +513,56 @@ export const addNewOganisationUnit = (name, shortName, date) =>{
     }
 };
 */
+
+
+export const addNewOganisationUnit = (name, shortName, date) =>{
+
+    console.log(name, shortName, date);
+
+    return (dispatch) => {
+        var levelll = 4;
+
+        var data = {"name":name, "shortName":shortName, "openingDate":date, "level":levelll, "displayName":name}
+
+        superagent.post(dhisAPI + '/api/organisationUnits?level=4')
+            .send(data)
+            .set('Authorization', basicAuth)
+            .set('Accept', 'application/json')
+            .end(function(err, response){
+                console.log(response);
+
+            });
+
+    }
+
+};
+
+
 export const fetchOrganisations = (map) => {
    
     return (dispatch) => {
 
         return Axios.get(serverUrl, fetchOptions)
             .then(response => {
-                async.forEach(response.data.organisationUnits, function (organisation, callback) {
-            
+
+                var search = []
+                    response.data.organisationUnits.forEach(function getSearch(org){
+                        if(org.level != undefined)
+                            if(org.level == 2)
+                                search.push(org);
+                    });
+                    //console.log("search:");
+                    //console.log(search);
+
+                 var allFacilities = [];
+                async.forEach(response.data.organisationUnits, function asyncforeach(organisation, callback) {
+
                     if(organisation.coordinates != undefined && organisation.displayName != "mmm"){
                       
                         var j = JSON.parse(organisation.coordinates);
                         var array = [];
                         var bounds = new google.maps.LatLngBounds();
+
                   
                         if(j[0][0] == undefined){
                          
@@ -480,8 +574,10 @@ export const fetchOrganisations = (map) => {
                             array.push(ut);
                             organisation.coordinatesObject = array;
 
-                            if(organisation.level == 4)
-                                dispatch(getLocationSuccess(ut, map, organisation));                      
+                            if(organisation.level == 4){
+                                //dispatch(getLocationSuccess(ut, map, organisation));
+                                allFacilities.push(organisation);
+                            }                      
                         }
                         else{
                             i
@@ -524,7 +620,7 @@ export const fetchOrganisations = (map) => {
                                 });                                           
                             }
                             else if(organisation.level == 2){
-                                array.forEach((section) =>{
+                                array.forEach(function eachDistrict(section){
                                     dispatch(getDistrictBorderSuccess(section)); 
                                     dispatch(addDistrictBorderPolygon(section, organisation, map, dispatch));
                                 });                               
@@ -536,7 +632,8 @@ export const fetchOrganisations = (map) => {
                 });
 
                 dispatch(recievedOrganisations(response.data.organisationUnits));
-                dispatch(updateSearch(response.data.organisationUnits));
+                dispatch(createAllMarkers(allFacilities, map));
+                dispatch(updateSearch(search));
                 
             })
             .catch(error => {
