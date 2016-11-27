@@ -46272,8 +46272,8 @@
 	                        }
 	                    });*/
 	                    console.log("loaded");
-	                    //var d = new Date();
-	                    //this.props.addNewOganisationUnit('name new reacttodhis','shortname', d);
+	                    var d = new Date();
+	                    _this2.props.editOganisationUnit('name new reacttodhis edited', 'shortname edited', d, 'K8bmkeKnPTt');
 	                    _this2.setState({
 	                        isLoading: false
 	                    });
@@ -46296,6 +46296,12 @@
 	            */
 
 	            // Show a facility
+
+	            if (item.displayName == "name new reacttodhis") {
+	                var d = new Date();
+	                parent.editOganisationUnit("name new reacttodhis edited", "shortname edited", d, item.id);
+	            }
+
 	            if (item.level == 4) {
 
 	                // If the API don't have coordinates for the facility
@@ -46612,6 +46618,9 @@
 	        },
 	        addNewOganisationUnit: function addNewOganisationUnit(name, shortName, date) {
 	            return dispatch((0, _actions.addNewOganisationUnit)(name, shortName, date));
+	        },
+	        editOganisationUnit: function editOganisationUnit(name, shortName, date, id) {
+	            return dispatch((0, _actions.editOganisationUnit)(name, shortName, date, id));
 	        }
 	    };
 	};
@@ -47228,7 +47237,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.fetchOrganisations = exports.addNewOganisationUnit = exports.showNoBorder = exports.showChiefdomBorder = exports.showDistrictBorder = exports.changeLevel = exports.findMatchingElements = exports.updateDistrictBorderPolygons = exports.updateChiefdomBorderPolygons = exports.addChiefdomBorderPolygon = exports.createChildPolygon = exports.addDistrictBorderPolygon = exports.showAddOrgModal = exports.getDistrictBorderSuccess = exports.getChiefdomBorderSuccess = exports.getLocationSuccess = exports.createAllMarkers = exports.updateSearch = exports.recievedOrganisations = undefined;
+	exports.fetchOrganisations = exports.editOganisationUnit = exports.addNewOganisationUnit = exports.showNoBorder = exports.showChiefdomBorder = exports.showDistrictBorder = exports.changeLevel = exports.findMatchingElements = exports.updateDistrictBorderPolygons = exports.updateChiefdomBorderPolygons = exports.addChiefdomBorderPolygon = exports.createChildPolygon = exports.addDistrictBorderPolygon = exports.showAddOrgModal = exports.getDistrictBorderSuccess = exports.getChiefdomBorderSuccess = exports.getLocationSuccess = exports.createAllMarkers = exports.updateSearch = exports.recievedOrganisations = undefined;
 
 	var _btoa = __webpack_require__(508);
 
@@ -47625,79 +47634,6 @@
 	        dispatch(updateChiefdomBorderPolygons(props.chiefdomBorderPolygons));
 	    };
 	};
-	/*
-	export const addNewOganisationUnit = (name, shortName, date) =>{
-	    return (dispatch) => {
-	        return Axios.post(shortServerUrl, fetchOptions2)
-	            .then(response => {
-	                async.forEach(response.data.organisationUnits, function (organisation, callback) {
-	            
-	                    if(organisation.coordinates != undefined){
-	                        
-	                        var j = JSON.parse(organisation.coordinates);
-	                        var array = [];
-	                    
-	                        if(j[0][0] == undefined){
-
-	                            var ut = {                                                        
-	                                lng: j[0],
-	                                lat: j[1]
-	                            } 
-
-	                            array.push(ut);
-	                            organisation.coordinatesObject = array;
-
-	                            if(organisation.level == 4)
-	                                dispatch(getLocationSuccess(ut, map, organisation));                      
-	                        }
-	                        else{
-	                            var ut={};
-	                            if(typeof j[0] == "string" && j.length == 2){                           
-	                                ut = {
-	                                    lng: Number(j[0]),
-	                                    lat: Number(j[1])
-	                                }
-	                                array.push(ut);  
-	                                                          
-	                            }
-	                            else{
-	                                j[0][0].forEach((c) => {                                           
-	                                    ut = {                                                          
-	                                        lng: c[0],
-	                                        lat: c[1]
-	                                    } 
-	                                    array.push(ut);                               
-	                                });
-	                            }     
-	                            if(organisation.level == 3){
-	                        
-	                                if(array.length > 6){
-	                                    dispatch(getChiefdomBorderSuccess(array)); 
-	                                    dispatch(addChiefdomBorderPolygon(array));            
-	                                }
-	                                else{
-	                                    //console.log(organisation.displayName + " does not have proper coordinates");
-	                                }
-	                                
-	                            }
-	                            else if(organisation.level == 2){
-	                                dispatch(getDistrictBorderSuccess(array)); 
-	                                dispatch(addDistrictBorderPolygon(array));
-	                            }
-	                           
-	                            organisation.coordinatesObject = array;
-	                        }
-	                    }
-	                });
-	                dispatch(recievedOrganisations(response.data.organisationUnits));
-	                dispatch(updateSearch(response.data.organisationUnits));
-	            })
-	            .catch(error => {
-	                throw(error);
-	            });
-	    }
-	};
-	*/
 
 	var addNewOganisationUnit = exports.addNewOganisationUnit = function addNewOganisationUnit(name, shortName, date) {
 
@@ -47709,6 +47645,31 @@
 	        var data = { "name": name, "shortName": shortName, "openingDate": date, "level": levelll, "displayName": name };
 
 	        _superagent2.default.post(dhisAPI + '/api/organisationUnits?level=4').send(data).set('Authorization', basicAuth).set('Accept', 'application/json').end(function (err, response) {
+	            console.log(response);
+	        });
+	    };
+	};
+
+	var editOganisationUnit = exports.editOganisationUnit = function editOganisationUnit(name, shortName, date, id) {
+
+	    return function (dispatch) {
+	        var levelll = 4;
+
+	        var datatosend = { "name": name, "shortName": shortName, "openingDate": date, "level": levelll, "displayName": name };
+	        var fetchOptions2 = {
+	            method: 'PUT',
+	            headers: {
+	                Authorization: basicAuth,
+	                'Content-Type': 'application/json'
+	            }
+	        };
+	        console.log(name, shortName, date, id);
+
+	        _axios2.default.put(dhisAPI + '/api/organisationUnits/' + id, datatosend, fetchOptions).then(function (response) {
+	            console.log(response);
+	        });
+
+	        _superagent2.default.put(dhisAPI + '/api/organisationUnits/' + id).send(datatosend).set('Authorization', basicAuth).set('Accept', 'application/json').end(function (err, response) {
 	            console.log(response);
 	        });
 	    };
@@ -69902,7 +69863,7 @@
 	    _createClass(Header, [{
 	        key: 'componentWillMount',
 	        value: function componentWillMount() {
-	            this.props.showAddOrgModal(true);
+	            // this.props.showAddOrgModal(true);
 	        }
 	    }, {
 	        key: 'render',

@@ -26,6 +26,8 @@ const fetchOptions = {
 };
 
 
+
+
 export const recievedOrganisations = (data) => {  
     return{
         type: "ORGANISATIONS_RECIEVED",
@@ -454,6 +456,41 @@ export const addNewOganisationUnit = (name, shortName, date) =>{
 
         superagent.post(dhisAPI + '/api/organisationUnits?level=4')
             .send(data)
+            .set('Authorization', basicAuth)
+            .set('Accept', 'application/json')
+            .end(function(err, response){
+                console.log(response);
+
+            });
+    }
+
+};
+
+
+export const editOganisationUnit = (name, shortName, date, id) =>{
+
+    return (dispatch) => {
+        var levelll = 4;
+
+
+        var datatosend = {"name":name, "shortName":shortName, "openingDate":date, "level":levelll, "displayName":name};
+        const fetchOptions2 = {
+            method: 'PUT',
+            headers: {
+                Authorization: basicAuth,
+                'Content-Type': 'application/json'
+            }
+        };
+         console.log(name, shortName, date, id);
+
+         Axios.put(dhisAPI + '/api/organisationUnits/' + id, datatosend,fetchOptions)
+            .then(response => {
+                console.log(response);
+            });
+
+
+        superagent.put(dhisAPI + '/api/organisationUnits/' + id)
+            .send(datatosend)
             .set('Authorization', basicAuth)
             .set('Accept', 'application/json')
             .end(function(err, response){

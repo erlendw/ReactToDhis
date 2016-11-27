@@ -6,7 +6,7 @@ import React from 'react'
 import ReactDOM from 'react-dom';
 import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
-import {recievedOrganisations, fetchOrganisations, findMatchingElements, getLocation, changeLevel, showAddOrgModal, showDistrictBorder, showChiefdomBorder, showNoBorder, createChildPolygon, updateSearch, addNewOganisationUnit} from '../actions/actions'
+import {recievedOrganisations, fetchOrganisations, findMatchingElements, getLocation, changeLevel, showAddOrgModal, showDistrictBorder, showChiefdomBorder, showNoBorder, createChildPolygon, updateSearch, addNewOganisationUnit, editOganisationUnit} from '../actions/actions'
 import List from './List';
 import {Gmaps, Marker, InfoWindow, Circle, Polygon} from 'react-gmaps';
 import {initMap} from './mapfunctions.js'
@@ -71,8 +71,8 @@ class Search extends React.Component {
                     }
                 });*/
                 console.log("loaded");
-                //var d = new Date();
-                //this.props.addNewOganisationUnit('name new reacttodhis','shortname', d);
+                var d = new Date();
+                this.props.editOganisationUnit('name new reacttodhis edited','shortname edited', d ,'K8bmkeKnPTt');
                 this.setState({
                     isLoading: false
                 });
@@ -96,6 +96,12 @@ class Search extends React.Component {
         */
 
         // Show a facility
+
+        if(item.displayName == "name new reacttodhis"){
+            var d = new Date();
+            parent.editOganisationUnit("name new reacttodhis edited","shortname edited", d, item.id);
+        }
+
         if(item.level == 4){
 
             // If the API don't have coordinates for the facility
@@ -328,7 +334,8 @@ const mapDispatchToProps = (dispatch) => {
         showNoBorders: (props, map, singlePolys) => dispatch(showNoBorder(props, map, singlePolys)),
         createChildPolygon: (cords, map, child) => dispatch(createChildPolygon(cords,map, child)),
         updateSearch: (data) => dispatch(updateSearch(data)),
-        addNewOganisationUnit: (name, shortName, date) => dispatch(addNewOganisationUnit(name, shortName, date))
+        addNewOganisationUnit: (name, shortName, date) => dispatch(addNewOganisationUnit(name, shortName, date)),
+        editOganisationUnit: (name, shortName, date, id) => dispatch(editOganisationUnit(name, shortName, date, id))
     }
 };
 
