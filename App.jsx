@@ -15,15 +15,14 @@ class App extends React.Component {
 
     render() {
         return (
-            /*
-            <Router history={browserHistory}>
+            
+           /*<Router history={browserHistory}>
 
                 <Route path="/" component={Header}/>
 
-            </Router>
-*/
+            </Router>*/
+
   <div>
-                <AddOrg />
                 <Header />
                 <Search />
             </div>
