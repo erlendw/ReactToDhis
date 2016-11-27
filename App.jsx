@@ -1,19 +1,28 @@
 import React from 'react';
 
 import { Button,Table,Navbar,Nav,NavItem,Form,ControlLabel, NavDropdown, FormGroup,FormControl, NavbarBrand, MenuItem,  } from 'react-bootstrap';
+import {Route, Router, browserHistory} from 'react-router'
 import { CreateStore } from 'redux';
 import Search from './containers/Search'
 import AddOrg from './containers/AddOrg'
-import Request from 'superagent'
-import btoa from 'btoa'
-import $ from 'jquery'
+import Header from './containers/Header'
+
+
+
 
 
 class App extends React.Component {
 
     render() {
         return (
-            <div>
+            /*
+            <Router history={browserHistory}>
+
+                <Route path="/" component={Header}/>
+
+            </Router>
+*/
+  <div>
                 <AddOrg />
                 <Header />
                 <Search />
@@ -22,34 +31,7 @@ class App extends React.Component {
     }
 }
 
-class Header extends React.Component {
-    render() {
-        return (
-            <div>
-                <Navbar collapseOnSelect>
-                    <Navbar.Header>
-                        <Navbar.Brand>
-                            <a href="#">React To DHIS</a>
-                        </Navbar.Brand>
-                        <Navbar.Toggle />
-                    </Navbar.Header>
-                    <Navbar.Collapse>
-                        <Nav>
-                            <NavItem eventKey={1} href="#">Browse the Organisation Units in DHIS2</NavItem>
-                            
-                            
-                        </Nav>
 
-                        <Nav pullRight>
-                            <NavItem eventKey={1} href="#">Help</NavItem>
-                        </Nav>
-
-                    </Navbar.Collapse>
-                </Navbar>
-            </div>
-        );
-    }
-}
 
 class Content extends React.Component {
     render() {

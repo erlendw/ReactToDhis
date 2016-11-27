@@ -440,79 +440,7 @@ export const showNoBorder = (props, map, singles) => {
 
     }   
 };
-/*
-export const addNewOganisationUnit = (name, shortName, date) =>{
-    return (dispatch) => {
-        return Axios.post(shortServerUrl, fetchOptions2)
-            .then(response => {
-                async.forEach(response.data.organisationUnits, function (organisation, callback) {
-            
-                    if(organisation.coordinates != undefined){
-                        
-                        var j = JSON.parse(organisation.coordinates);
-                        var array = [];
-                    
-                        if(j[0][0] == undefined){
 
-                            var ut = {                                                        
-                                lng: j[0],
-                                lat: j[1]
-                            } 
-
-                            array.push(ut);
-                            organisation.coordinatesObject = array;
-
-                            if(organisation.level == 4)
-                                dispatch(getLocationSuccess(ut, map, organisation));                      
-                        }
-                        else{
-                            var ut={};
-                            if(typeof j[0] == "string" && j.length == 2){                           
-                                ut = {
-                                    lng: Number(j[0]),
-                                    lat: Number(j[1])
-                                }
-                                array.push(ut);  
-                                                          
-                            }
-                            else{
-                                j[0][0].forEach((c) => {                                           
-                                    ut = {                                                          
-                                        lng: c[0],
-                                        lat: c[1]
-                                    } 
-                                    array.push(ut);                               
-                                });
-                            }     
-                            if(organisation.level == 3){
-                        
-                                if(array.length > 6){
-                                    dispatch(getChiefdomBorderSuccess(array)); 
-                                    dispatch(addChiefdomBorderPolygon(array));            
-                                }
-                                else{
-                                    //console.log(organisation.displayName + " does not have proper coordinates");
-                                }
-                                
-                            }
-                            else if(organisation.level == 2){
-                                dispatch(getDistrictBorderSuccess(array)); 
-                                dispatch(addDistrictBorderPolygon(array));
-                            }
-                           
-                            organisation.coordinatesObject = array;
-                        }
-                    }
-                });
-                dispatch(recievedOrganisations(response.data.organisationUnits));
-                dispatch(updateSearch(response.data.organisationUnits));
-            })
-            .catch(error => {
-                throw(error);
-            });
-    }
-};
-*/
 
 
 export const addNewOganisationUnit = (name, shortName, date) =>{
@@ -532,10 +460,10 @@ export const addNewOganisationUnit = (name, shortName, date) =>{
                 console.log(response);
 
             });
-
     }
 
 };
+
 
 
 export const fetchOrganisations = (map) => {

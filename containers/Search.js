@@ -65,14 +65,14 @@ class Search extends React.Component {
             then((orgs) => {
                // var e = {target: {value: 2}};
                // this.props.changeLevel(e,this.props.search,this.props.organisations);
-                this.props.organisations.forEach((org) => {
+                /*this.props.organisations.forEach((org) => {
                     if(org.displayName == 'name new reacttodhis'){
                         console.log(org);
                     }
-                });
+                });*/
                 console.log("loaded");
-                var d = new Date();
-                this.props.addNewOganisationUnit('name new reacttodhis','shortname', d);
+                //var d = new Date();
+                //this.props.addNewOganisationUnit('name new reacttodhis','shortname', d);
                 this.setState({
                     isLoading: false
                 });
