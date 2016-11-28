@@ -7,6 +7,7 @@ import organisations from './organisation';
 import search from './search';
 import markers from './marker';
 import addOrg from './addOrg';
+import showHelp from './showHelp';
 import currentOrg from './currentOrg'
 import changeOrg from './changeOrg';
 import chiefdomBorder from './chiefdomBorder';

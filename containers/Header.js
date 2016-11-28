@@ -7,10 +7,10 @@ import React from 'react'
 import ReactDOM from 'react-dom';
 import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
-import {recievedOrganisations, fetchOrganisations, showAddOrgModal, showChangeOrgModal} from '../actions/actions'
+import {recievedOrganisations, fetchOrganisations, showAddOrgModal, showChangeOrgModal, showHelpModal} from '../actions/actions'
 import AddOrg from './AddOrg'
 import ChangeOrg from './ChangeOrg'
-
+import ShowHelp from './ShowHelp'
 
 
 class Header extends React.Component {
@@ -36,14 +36,14 @@ class Header extends React.Component {
                         </Nav>
 
                         <Nav pullRight>
-                            <NavItem eventKey={1} href="#">Help</NavItem>
+                            <NavItem eventKey={1} href="#" onClick={() => {this.props.showHelpModal(true)}}>Help</NavItem>
                         </Nav>
-
                     </Navbar.Collapse>
                 </Navbar>
                 
                 <AddOrg/>
                 <ChangeOrg/>
+                <ShowHelp/>
             </div>
         );
     }
@@ -52,14 +52,16 @@ class Header extends React.Component {
 
 const mapStateToProps = (state) => {
     return{
-        addOrg : state.addOrg
+        addOrg : state.addOrg,
+        showHelp : state.showHelp
     }
 };
 
 const mapDispatchToProps = (dispatch) => {
     return {
        showAddOrgModal : (b) => {dispatch(showAddOrgModal(b))},
-       showChangeOrgModal : (b) => {dispatch(showChangeOrgModal(b))}
+       showChangeOrgModal : (b) => {dispatch(showChangeOrgModal(b))},
+       showHelpModal : (b) => {dispatch(showHelpModal(b))}
     }
 };
 

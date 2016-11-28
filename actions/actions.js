@@ -64,7 +64,12 @@ export const getDistrictBorderSuccess = (cords) => {
     }
 };
 
-
+export const showHelpModal = (b) => { //b === boolean
+    return {
+        type: 'SHOW_HELP_MODAL',
+        payload : b
+    }
+};
 
 export const showAddOrgModal = (b) => { //b === boolean
     return {
