@@ -6,12 +6,10 @@ import React from 'react'
 import ReactDOM from 'react-dom';
 import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
-import {recievedOrganisations, fetchOrganisations, findMatchingElements, getLocation, changeLevel, showAddOrgModal, showDistrictBorder, showChiefdomBorder, showNoBorder, createChildPolygon, updateSearch, addNewOganisationUnit, editOganisationUnit} from '../actions/actions'
-import List from './List';
-import {Gmaps, Marker, InfoWindow, Circle, Polygon} from 'react-gmaps';
-import {initMap} from './mapfunctions.js'
 import jquery from 'jquery'
 import loadGoogleMapsAPI from 'load-google-maps-api';
+import {recievedOrganisations, fetchOrganisations, findMatchingElements, getLocation, changeLevel, showAddOrgModal, showDistrictBorder, showChiefdomBorder, showNoBorder, createChildPolygon, updateSearch, addNewOganisationUnit, editOganisationUnit} from '../actions/actions'
+import List from './List';
 
 var markerImg = 'marker.png';
 var map;
@@ -23,9 +21,8 @@ class Search extends React.Component {
     constructor(props, context) {
         super(props, context);
 
-        // Set some initial state variables that are used within the component
+        // variable used for 
         this.state = {
-            isSaving: false,
             isLoading: true
         };
     }
@@ -52,27 +49,11 @@ class Search extends React.Component {
             // Add listner for clicks on the map
             google.maps.event.addListener(map,'click', function(event) {
                 this.props.showAddOrgModal(true);
-                console.log(this.props);
-                /*var marker = new google.maps.Marker({
-                    position: event.latLng,
-                    label: "new marker",
-                    map: map
-                });*/
             });
 
             // Get all organisational units
             this.props.fetchOrganisations(map).
             then((orgs) => {
-               // var e = {target: {value: 2}};
-               // this.props.changeLevel(e,this.props.search,this.props.organisations);
-                /*this.props.organisations.forEach((org) => {
-                    if(org.displayName == 'name new reacttodhis'){
-                        console.log(org);
-                    }
-                });*/
-                console.log("loaded");
-                var d = new Date();
-                this.props.editOganisationUnit('name new reacttodhis edited','shortname edited', d ,'K8bmkeKnPTt');
                 this.setState({
                     isLoading: false
                 });
@@ -93,25 +74,21 @@ class Search extends React.Component {
         The function draws the borders of a district
         or a chiefdom and displays a facility as a 
         marker.
-        element.style.display = 'none';           // Hide
-        element.style.display = 'block';          // Show
-        element.style.display = 'inline';         // Show
-        element.style.display = 'inline-block';   // Show
         */
 
-        // Show a facility
-
         var element = document.getElementById(item.id);
-        element.style.display = 'block';          // Show
-        element.style.display = 'inline';         // Show
-        element.style.display = 'inline-block';   // Show
-        console.log(element);
 
-        if(item.displayName == "name new reacttodhis"){
-            var d = new Date();
-            parent.editOganisationUnit("name new reacttodhis edited","shortname edited", d, item.id);
+        console.log(element.style.display);
+
+        if(element.style.display == 'inline-block'){
+            console.log("close listthingy");
+            element.style.display = 'none';
         }
+        else{
+            element.style.display = 'inline-block';
+        }    
 
+        // Show a facility
         if(item.level == 4){
 
             // If the API don't have coordinates for the facility
@@ -255,11 +232,8 @@ class Search extends React.Component {
                                 });
                             }   
                         }                      
-                    }
-                                  
-                    
-                });
-                
+                    }     
+                });              
             });
 
             // Add polygon to array to keep track

@@ -509,10 +509,8 @@ export const fetchOrganisations = (map) => {
                             if(org.level == 2)
                                 search.push(org);
                     });
-                    //console.log("search:");
-                    //console.log(search);
 
-                 var allFacilities = [];
+                var allFacilities = [];
                 async.forEach(response.data.organisationUnits, function asyncforeach(organisation, callback) {
 
                     if(organisation.coordinates != undefined && organisation.displayName != "mmm"){
@@ -533,12 +531,11 @@ export const fetchOrganisations = (map) => {
                             organisation.coordinatesObject = array;
 
                             if(organisation.level == 4){
-                                //dispatch(getLocationSuccess(ut, map, organisation));
                                 allFacilities.push(organisation);
                             }                      
                         }
                         else{
-                            i
+                            
                             var ut={};
                             if(typeof j[0] == "string" && j.length == 2){    
                                                    
@@ -546,16 +543,13 @@ export const fetchOrganisations = (map) => {
                                     lng: Number(j[0]),
                                     lat: Number(j[1])
                                 }
-                                array.push(ut);  
-                                                          
+                                array.push(ut);                                
                             }
                             else{                                             
                                 for(var i = 0; i < j.length; i+=1){
                                     var temp = [];
-                                    //console.log(j[i]);
                                     j[i].forEach((c) => {
                                         c.forEach((subC)=>{
-                                           // console.log(c);
                                             ut = {                                                          
                                                 lng: subC[0],
                                                 lat: subC[1]
@@ -571,7 +565,6 @@ export const fetchOrganisations = (map) => {
                             if(organisation.level == 3){  
                                 array.forEach((section) =>{
                                     if(section.length > 6){
-                                        dispatch(getChiefdomBorderSuccess(section)); 
                                         organisation.centerCoordinates = bounds.getCenter();
                                         dispatch(addChiefdomBorderPolygon(section, organisation, map));
                                     }
@@ -579,7 +572,6 @@ export const fetchOrganisations = (map) => {
                             }
                             else if(organisation.level == 2){
                                 array.forEach(function eachDistrict(section){
-                                    dispatch(getDistrictBorderSuccess(section)); 
                                     dispatch(addDistrictBorderPolygon(section, organisation, map, dispatch));
                                 });                               
                             }                           
@@ -588,11 +580,9 @@ export const fetchOrganisations = (map) => {
                         }
                     }
                 });
-
                 dispatch(recievedOrganisations(response.data.organisationUnits));
                 dispatch(createAllMarkers(allFacilities, map));
-                dispatch(updateSearch(search));
-                
+                dispatch(updateSearch(search));       
             })
             .catch(error => {
                 throw(error);

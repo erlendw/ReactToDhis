@@ -8,15 +8,18 @@ export function List({ organisations = [], onItemClick, props, map, singles}) {
     const listItems = organisations
         .map((organisation,i) => {
            return(
-            <li key={organisation.id}>
+            <li key={organisation.id} className="list-element">
+              <div className="list-element-wrapper">
+                  <div>
+                      <a onClick={() => onItemClick(organisation, props, map, singles)}>{organisation.displayName}</a>
+                  </div>
+                  <div className="showhide" id={organisation.id}>
+                      {organisation.id}<br/>
+                      <button type="button">Edit</button>
 
-                <div>
-                    <a onClick={() => onItemClick(organisation, props, map, singles)}>{organisation.displayName}</a>
+                  </div>
                 </div>
-                <div className="showhide" id={organisation.id}>
-                    {organisation.id}
-
-                </div>
+  
             </li>
             );
         });
