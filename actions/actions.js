@@ -116,7 +116,7 @@ export const createAllMarkers = (allFacilities, map) =>{
         // Create the marker
         var marker = new google.maps.Marker({
             position: item.coordinatesObject[0],
-            icon: 'marker.png',
+            icon: 'http://i.imgur.com/6SuUCSW.png',
             map: map
         });
 
@@ -173,7 +173,7 @@ export const getLocationSuccess = (coordinates, map, item) => {
     // Create the marker
     var marker = new google.maps.Marker({
         position: coordinates,
-        icon: 'marker.png',
+        icon: 'http://i.imgur.com/6SuUCSW.png',
         map: map
     });
 
@@ -503,7 +503,7 @@ export const editOganisationUnit = (name, shortName, date, id) =>{
     }
 
 };
-/*
+
 export const fetchOrganisations = (map) => {
    
     return (dispatch) => {
@@ -555,7 +555,7 @@ export const fetchOrganisations = (map) => {
                                 ut = {
                                     lng: Number(j[0]),
                                     lat: Number(j[1])
-                                }
+                                };
                                 array.push(ut);  
                                                           
                             }
@@ -569,7 +569,7 @@ export const fetchOrganisations = (map) => {
                                             ut = {                                                          
                                                 lng: subC[0],
                                                 lat: subC[1]
-                                            } 
+                                            };
                                             bounds.extend(ut);
                                             temp.push(ut); 
                                         });
@@ -603,101 +603,12 @@ export const fetchOrganisations = (map) => {
 
                 Perf.printExclusive(measurements)
 
-
                 dispatch(recievedOrganisations(response.data.organisationUnits));
                 dispatch(createAllMarkers(allFacilities, map));
                 dispatch(updateSearch(search));
-
-
-                
             })
             .catch(error => {
                 throw(error);
             });
-
-
-
-    }
-};*/
-
-
-export const fetchOrganisations = (map) => {
-
-
-    var level1 = [];
-    var level2 = [];
-    var level3 = [];
-    var level4 = [];
-
-    var level2_coords = [];
-
-
-    return (dispatch) => {
-
-
-        return Axios.get(serverUrl, fetchOptions)
-            .then(response => {
-
-                var allObjects = response.data.organisationUnits;
-
-
-
-
-
-                /*
-                var len = allObjects.length;
-                while (len--) {
-
-                    var obj = allObjects[len];
-
-                    switch (obj.level){
-                        case 1:
-                            level1.push(obj);
-                            break;
-                        case 2:
-                            level2.push(obj);
-                            if(obj.coordinates != undefined){
-                                level2_coords.push(JSON.parse(obj.coordinates))
-                            }
-                            break;
-                        case 3:
-                            level3.push(obj);
-                            break;
-                        case 4:
-                            level4.push(obj);
-                            break;
-
-                }}
-                */
-
-                /*for(var i = 0; i > allObjects.length; i++){
-
-                    console.log(allObjects[i]);
-
-                    /*switch (allObjects[i].level){
-
-                        case 1:
-                            level1.push(allObjects[i]);
-                            break;
-                        case 2:
-                            level2.push(allObjects[i]);
-                            break;
-                        case 3:
-                            level3.push(allObjects[i]);
-                            break;
-                        case 4:
-                            level4.push(allObjects[i]);
-                            break;
-                    }*/
-
-
-
-                console.log(level2_coords[0][0])
-
-            })
-
-
-
     }
 };
-

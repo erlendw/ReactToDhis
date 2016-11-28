@@ -54,22 +54,22 @@ class Search extends React.Component {
                 this.props.showAddOrgModal(true);
                 console.log(this.props);
                 /*var marker = new google.maps.Marker({
-                    position: event.latLng,
-                    label: "new marker",
-                    map: map
-                });*/
+                 position: event.latLng,
+                 label: "new marker",
+                 map: map
+                 });*/
             });
 
             // Get all organisational units
             this.props.fetchOrganisations(map).
             then((orgs) => {
-               // var e = {target: {value: 2}};
-               // this.props.changeLevel(e,this.props.search,this.props.organisations);
+                // var e = {target: {value: 2}};
+                // this.props.changeLevel(e,this.props.search,this.props.organisations);
                 /*this.props.organisations.forEach((org) => {
-                    if(org.displayName == 'name new reacttodhis'){
-                        console.log(org);
-                    }
-                });*/
+                 if(org.displayName == 'name new reacttodhis'){
+                 console.log(org);
+                 }
+                 });*/
                 console.log("loaded");
                 var d = new Date();
                 this.props.editOganisationUnit('name new reacttodhis edited','shortname edited', d ,'K8bmkeKnPTt');
@@ -79,25 +79,25 @@ class Search extends React.Component {
             });
 
         }).catch((err) => {
-          console.error(err);
+            console.error(err);
         });
     }
 
     onItemClick(item, parent, map, singles) {
 
         /*
-        A functions which displays properties of a
-        organisational unit on the map when selected 
-        by the user in the results list. 
+         A functions which displays properties of a
+         organisational unit on the map when selected
+         by the user in the results list.
 
-        The function draws the borders of a district
-        or a chiefdom and displays a facility as a 
-        marker.
-        element.style.display = 'none';           // Hide
-        element.style.display = 'block';          // Show
-        element.style.display = 'inline';         // Show
-        element.style.display = 'inline-block';   // Show
-        */
+         The function draws the borders of a district
+         or a chiefdom and displays a facility as a
+         marker.
+         element.style.display = 'none';           // Hide
+         element.style.display = 'block';          // Show
+         element.style.display = 'inline';         // Show
+         element.style.display = 'inline-block';   // Show
+         */
 
         // Show a facility
 
@@ -127,26 +127,26 @@ class Search extends React.Component {
 
             if(item.parent != undefined)
                 chiefdom = item.parent.displayName;
-                if(item.parent.parent != undefined)
-                    district = item.parent.parent.displayName
-            
+            if(item.parent.parent != undefined)
+                district = item.parent.parent.displayName
+
             // Text for info window
             var info =  '<div id="content">'+
-                            '<div id="siteNotice">'+
-                            '</div>'+
-                            '<h2 id="secondHeading" class="secondHeading">'+ item.displayName+'</h2>'+
-                            '<div id="bodyContent">'+
-                            '<p><b>Chiefdom: </b>'+ chiefdom + 
-                            '<p><b>District: </b>'+ district + 
-                            '</p>'+
-                            '</div>'+
-                        '</div>';
+                '<div id="siteNotice">'+
+                '</div>'+
+                '<h2 id="secondHeading" class="secondHeading">'+ item.displayName+'</h2>'+
+                '<div id="bodyContent">'+
+                '<p><b>Chiefdom: </b>'+ chiefdom +
+                '<p><b>District: </b>'+ district +
+                '</p>'+
+                '</div>'+
+                '</div>';
 
             // Creates the marker
             var marker = new google.maps.Marker({
-              position: item.coordinatesObject[0],
-              label: item.displayName,
-              map: map
+                position: item.coordinatesObject[0],
+                label: item.displayName,
+                map: map
             });
 
             // Create an info window for the marker
@@ -163,18 +163,18 @@ class Search extends React.Component {
 
         // Show a Chiefdoms border and give it an info window
         else if(item.level == 3){
-            
+
             // Remove existing polygons
             parent.showNoBorders(parent, map, singles);
 
             // Content for info window
             var info =  '<div id="content">'+
-                    '<div id="siteNotice">'+
-                    '</div>'+
-                    '<h2 id="secondHeading" class="secondHeading">'+ item.displayName+'</h2>'+
-                    '<div id="bodyContent">'+
-                    '<p><b>Facilities in this Chiefdom: </b></p>'+
-                    '<p>';
+                '<div id="siteNotice">'+
+                '</div>'+
+                '<h2 id="secondHeading" class="secondHeading">'+ item.displayName+'</h2>'+
+                '<div id="bodyContent">'+
+                '<p><b>Facilities in this Chiefdom: </b></p>'+
+                '<p>';
 
             item.children.forEach((child) => {
                 info += child.displayName + '<br/>'
@@ -213,7 +213,7 @@ class Search extends React.Component {
 
         // Show a Districts border
         else if(item.level == 2){
-            
+
             // We don't want to remove existing single chiefdoms, user might want to see in which district said chiefdom is located.
             var newSingles = []
             singles.forEach(function(single){
@@ -243,45 +243,45 @@ class Search extends React.Component {
                 map.setCenter(item.centerCoordinates);
                 item.children.forEach((child) => {
                     if(child.coordinates != undefined){
-                        
+
                         var j = JSON.parse(child.coordinates);
-                        
+
                         for(var i = 0; i < j.length; i+=1){
-                            if(typeof j[i] != "number"){                           
+                            if(typeof j[i] != "number"){
                                 j[i].forEach((c) => {
                                     if(c.length > 6){
                                         createChildPolygon(j[i],map, child);
                                     }
                                 });
-                            }   
-                        }                      
+                            }
+                        }
                     }
-                                  
-                    
+
+
                 });
-                
+
             });
 
             // Add polygon to array to keep track
             singlePolygons.push(districtBorder);
-        }  
+        }
     }
 
     render() {
-        return (       
+        return (
             <div id="wrapper">
-                
+
                 <div id="search">
                     <div id="filter">
                         <Well>
-                            
+
                             <ControlLabel>Show border overlays:</ControlLabel><br/>
                             <ButtonGroup id="border-buttons">
                                 <Button onClick={() => {this.props.showNoBorders(this.props, map, singlePolygons)}}>None</Button>
                                 <Button onClick={() => {this.props.showDistrictBorders(this.props, map, singlePolygons)}}>Districts</Button>
                                 <Button onClick={() => {this.props.showChiefdomBorders(this.props, map, singlePolygons)}}>Chiefdoms</Button>
                             </ButtonGroup><br/>
-                            
+
                             <ControlLabel>Search:</ControlLabel><br/>
                             <select id="select" onChange={(e) => this.props.changeLevel(e,this.props.search,this.props.organisations)} defaultValue="2">
                                 <option value="" disabled>Filter levels--</option>
@@ -290,14 +290,14 @@ class Search extends React.Component {
                                 <option value="3">Chiefdoms</option>
                                 <option value="4">Facilities</option>
                             </select><br/>
-                            
-                    
+
+
                             <FormControl
                                 type="text"
                                 placeholder="Search Organisation Units..."
                                 onChange={ (text) => { this.props.findMatchingElements( this.props.organisations, text) }}
                             />
-                            
+
                             <ControlLabel id="results-label">Results:</ControlLabel><br/>
                             {this.state.isLoading ? <div id="loading"><div id="inner-loading"><h1>Loading data from DHIS2 ...</h1></div></div> : <div></div>}
                             <div id="results-wrapper">
@@ -309,9 +309,9 @@ class Search extends React.Component {
                                     singles ={singlePolygons}
                                 />
                             </div>
-                            
+
                         </Well>
-                    </div>                 
+                    </div>
                 </div>
             </div>
         );
@@ -323,7 +323,7 @@ const mapStateToProps = (state) => {
         organisations: state.organisations,
         search: state.search,
         markers: state.markers,
-        addOrg : state.addOrg,
+        ui : state.ui,
         chiefdomBorders: state.chiefdomBorder,
         districtBorders: state.districtBorder,
         chiefdomBorderPolygons: state.chiefdomBorderPolygon,
@@ -334,7 +334,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         recievedOrganisations: payload => dispatch(recievedOrganisations(payload)),
-        fetchOrganisations : (map) => dispatch(fetchOrganisations(map)), 
+        fetchOrganisations : (map) => dispatch(fetchOrganisations(map)),
         findMatchingElements : (data, search) => dispatch(findMatchingElements(data, search)),
         getLocation: name => dispatch(getLocation(name)),
         changeLevel: (level, search, organisations) => dispatch(changeLevel(level, search, organisations)),
@@ -350,4 +350,3 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Search);
-

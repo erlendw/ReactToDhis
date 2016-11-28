@@ -22,15 +22,16 @@ class AddOrg extends React.Component {
         };
 
         this.setOpeningDate = this.setOpeningDate.bind(this);
+        
     }
 
     handleSubmit(){
 
-        this.props.addNewOganisationUnit(this.state.name, this.state.shortName, this.state.date)
+        this.props.addNewOganisationUnit(this.state.name, this.state.shortName, this.state.date);
+        this.props.showAddOrgModal(false)
     }
 
     setOpeningDate(event) {
-
         console.log(event.target.value)
         this.setState({ date : event.target.value });
     }
@@ -54,6 +55,7 @@ class AddOrg extends React.Component {
                 break;
         }
     }
+    
 
     render(){
 

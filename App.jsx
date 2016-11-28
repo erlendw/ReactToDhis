@@ -16,17 +16,17 @@ class App extends React.Component {
 
     render() {
         return (
-            
+            /*
            <Router history={browserHistory}>
 
                 <Route path="/" component={Map}/>
 
-            </Router>
+            </Router>*/
 
-        /*<div>
-                <Header />
+        <div>
+               <Header />
                 <Search />
-            </div>*/
+            </div>
         );
     }
 }
