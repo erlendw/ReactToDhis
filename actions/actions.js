@@ -9,10 +9,10 @@ import superagent from 'superagent'
 
 
 // https://play.dhis2.org/demo/api/organisationUnits.json?filter=id:eq:vWbkYPRmKyS&fields=id,displayName,level,coordinates,children&paging=false&level=3
-//const serverUrl = dhisAPI + '/api/organisationUnits.json?fields=id,displayName,level,coordinates,parent[displayName,parent[displayName]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
+const serverUrl = dhisAPI + '/api/organisationUnits.json?fields=id,displayName,level,coordinates,parent[displayName,parent[displayName]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
 //const serverUrl = 'localhost:8080/api/organisationUnits.json?fields=id,displayName,level,coordinates,parent[displayName,parent[displayName]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
 
-const serverUrl = 'https://play.dhis2.org/test/api/organisationUnits.json?fields=id,displayName,level,coordinates,parent[displayName,parent[displayName]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
+//const serverUrl = 'https://play.dhis2.org/test/api/organisationUnits.json?fields=id,displayName,level,coordinates,parent[displayName,parent[displayName]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
 
 //const shortServerUrl = 'https://play.dhis2.org/test/api/organisationUnits';
 //const serverUrl = 'https://play.dhis2.org/test/api/organisationUnits.json?filter=id:eq:vWbkYPRmKyS&fields=coordinates,displayName';
@@ -37,8 +37,6 @@ export const recievedOrganisations = (data) => {
 
 export const updateCurrentOrg = (org) => {
     //owChangeOrgModal(true);
-    console.log("farts");
-    console.log(org);
     return {
         type: 'CURRENTORG_UPDATED',
         payload : org
@@ -69,7 +67,6 @@ export const getDistrictBorderSuccess = (cords) => {
 
 
 export const showAddOrgModal = (b) => { //b === boolean
-    console.log(b);
     return {
         type: 'ADDORG_UPDATED',
         payload : b
@@ -219,6 +216,7 @@ export const addDistrictBorderPolygon = (cords, item, map, dispatch) => {
     districtBorder.addListener('click', function(event) {
         
         districtBorder.fillOpacity = 0;
+        districtBorder.setMap(null);
         map.setZoom(9);
         map.setCenter(item.centerCoordinates);
 
@@ -249,8 +247,7 @@ export const addDistrictBorderPolygon = (cords, item, map, dispatch) => {
                 }
             }
         });
-        console.log(newSearch)
-       // dispatch(updateSearch(newSearch));
+        dispatch(updateSearch(newSearch));
         
     });
     return {
@@ -264,15 +261,11 @@ export const createChildPolygon = (childCords, map, child) =>{
 
 
     var bounds = new google.maps.LatLngBounds();
-    var temp = [];
-
-    
+    var temp = [];   
    
-
     childCords.forEach((c) => {
         c.forEach((subC)=>{
-        
-           // console.log(c);
+
             var ut = {                                                          
                 lng: subC[0],
                 lat: subC[1]
@@ -376,29 +369,26 @@ export const addChiefdomBorderPolygon = (cords, item, map) => {
 
 export const findMatchingElements = (data, search) => {
     return(dispatch) => {
-        console.log(search.target.value.length);
-        if(search.target.value.length > 4){
-            var satan = [];
-            data.forEach( (elem) =>
-            {
-                if(elem.displayName.toLowerCase().indexOf(search.target.value.toLowerCase()) !== -1 ){
-                    satan.push(elem)
-                }
-            });
-            dispatch(updateSearch(satan))
-        }
+        
+        var satan = [];
+        data.forEach( (elem) =>
+        {
+            if(elem.displayName.toLowerCase().indexOf(search.target.value.toLowerCase()) !== -1 ){
+                satan.push(elem)
+            }
+        });
+        dispatch(updateSearch(satan))        
     }
 };
 
 export const changeLevel = (e , data, all) => {
     return(dispatch) => {
-        console.log(e);
         var satan = [];
         if(e.target.value == 5){
             dispatch(updateSearch(all));
         }
         else{
-            data.forEach( (elem) => {
+            all.forEach( (elem) => {
                 if(elem.level == e.target.value){
                     satan.push(elem)
                 }
@@ -412,14 +402,14 @@ export const changeLevel = (e , data, all) => {
 export const showDistrictBorder = (props, map, singles) => {
     return(dispatch) => {
         singles.forEach(function(poly){
-            if(poly.type == "district")
+            if(poly.type == "district"){
                 poly.setMap(null);
-        });
+            }
 
+        });
         props.districtBorderPolygons.forEach(function(dbp){
-            dbp.setMap(map);        
+            dbp.setMap(map);                
             dbp.fillOpacity = 0.2;     
-            console.log(dbp);
         });
         props.chiefdomBorderPolygons.forEach(function(dbp){
             dbp.setMap(null);             
@@ -437,7 +427,7 @@ export const showChiefdomBorder = (props, map, singles) => {
             poly.setMap(null);
         });
         props.districtBorderPolygons.forEach(function(dbp){
-            dbp.setMap(null);             
+            dbp.setMap(null);            
         });
         props.chiefdomBorderPolygons.forEach(function(dbp){
             if(dbp.type != "chiefdomAddOn")
@@ -457,7 +447,8 @@ export const showNoBorder = (props, map, singles) => {
         });
         props.districtBorderPolygons.forEach(function(dbp){
             dbp.setMap(null);   
-            dbp.fillOpacity = 0.2;            
+            dbp.fillOpacity = 0.2;  
+         
         });
         props.chiefdomBorderPolygons.forEach(function(dbp){
             dbp.setMap(null);             
@@ -471,8 +462,6 @@ export const showNoBorder = (props, map, singles) => {
 
 
 export const addNewOganisationUnit = (name, shortName, date) =>{
-
-    console.log(name, shortName, date);
 
     return (dispatch) => {
         var levelll = 4;

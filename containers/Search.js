@@ -81,14 +81,19 @@ class Search extends React.Component {
         marker.
         */
 
+        //empty the map
+        parent.showNoBorders(parent, map, singles);
+
+        // get the list element
         var element = document.getElementById(item.id);
 
-        console.log(element.style.display);
-
-        if(element.style.display == 'inline-block'){
-            console.log("close listthingy");
+        // If open, close it
+        if(element.style.display == 'inline-block'){            
             element.style.display = 'none';
+            return;
         }
+
+        // Open it
         else{
             element.style.display = 'inline-block';
         }    
