@@ -19,8 +19,8 @@ class AddOrg extends React.Component {
         this.state = {
 
             name : '',
-            shortName : '',
-            date : ''
+            longitude : '',
+            latitude : ''
 
         };
 
@@ -58,14 +58,21 @@ class AddOrg extends React.Component {
         }
     }
 
+
+    componentDidMount(){
+        var org = this.props.currentOrg;
+        console.log(org)
+    }
+
     render(){
 
         return(
             <div>
                 <Modal show={this.props.changeOrg} >
                     <Modal.Header>
-                        <Modal.Title>Add new Organisation Unit</Modal.Title>
+                        <Modal.Title>Edit </Modal.Title>
                     </Modal.Header>
+                    
                     <Modal.Body>
                         <Form horizontal onSubmit={(e) => {this.handleSubmit(e)}}>
                             <FormGroup controlId="name" onSubmit={(e) => {this.handleSubmit(e)}}>
@@ -73,7 +80,7 @@ class AddOrg extends React.Component {
                                     Name
                                 </Col>
                                 <Col sm={6}>
-                                    <FormControl value={this.state.name} onChange={(e) => {this.handleChange(e)}} placeholder="Name"/>
+                                    <FormControl value={this.state.name} onChange={(e) => {this.handleChange(e)}} placeholder={this.props.currentOrg.displayName}/>
                                 </Col>
                             </FormGroup>
                             <FormGroup controlId="shortName">
@@ -86,10 +93,10 @@ class AddOrg extends React.Component {
                             </FormGroup>
                             <FormGroup controlId="date">
                                 <Col componentClass={ControlLabel} sm={4}>
-                                    Opening Date
+                                    Opening Date was {this.props.currentOrg.openingDate}
                                 </Col>
                                 <Col sm={6}>
-                                    <input type="date" value={this.state.openingDate} onChange={this.setOpeningDate} />
+                                    <input type="date" value={this.state.openingDate} placeholder={this.props.currentOrg.openingDate} onChange={this.setOpeningDate} />
                                 </Col>
                             </FormGroup>
                         </Form>
@@ -119,7 +126,8 @@ class AddOrg extends React.Component {
 
 const mapStateToProps = (state) => {
     return{
-        changeOrg : state.changeOrg
+        changeOrg : state.changeOrg,
+        currentOrg: state.currentOrg
     }
 
 };

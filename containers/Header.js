@@ -16,7 +16,7 @@ import ChangeOrg from './ChangeOrg'
 class Header extends React.Component {
 
     componentWillMount(){
-       this.props.showChangeOrgModal(true);
+       //this.props.showChangeOrgModal(true);
     }
 
 
