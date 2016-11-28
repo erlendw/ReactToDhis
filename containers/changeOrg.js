@@ -1,10 +1,13 @@
 /**
+ * Created by erlend on 27.11.2016.
+ */
+/**
  * Created by erlend on 16.11.2016.
  */
 import React from 'react';
 import {connect} from 'react-redux';
 
-import {showAddOrgModal, addNewOganisationUnit} from '../actions/actions'
+import {showChangeOrgModal, addNewOganisationUnit} from '../actions/actions'
 
 
 import {Modal,OverlayTrigger, Button, ControlLabel, FormControl, FormGroup, Col, Form} from 'react-bootstrap'
@@ -59,37 +62,37 @@ class AddOrg extends React.Component {
 
         return(
             <div>
-                <Modal show={this.props.addOrg} >
+                <Modal show={this.props.changeOrg} >
                     <Modal.Header>
                         <Modal.Title>Add new Organisation Unit</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                    <Form horizontal onSubmit={(e) => {this.handleSubmit(e)}}>
-                        <FormGroup controlId="name" onSubmit={(e) => {this.handleSubmit(e)}}>
-                            <Col componentClass={ControlLabel} sm={4}>
-                                Name
-                            </Col>
-                            <Col sm={6}>
-                                <FormControl value={this.state.name} onChange={(e) => {this.handleChange(e)}} placeholder="Name"/>
-                            </Col>
-                        </FormGroup>
-                        <FormGroup controlId="shortName">
-                            <Col componentClass={ControlLabel} sm={4}>
-                                Short Name
-                            </Col>
-                            <Col sm={6}>
-                                <FormControl value={this.state.shortName} onChange={(e) => {this.handleChange(e)}} placeholder="Short Name" />
-                            </Col>
-                        </FormGroup>
-                        <FormGroup controlId="date">
-                            <Col componentClass={ControlLabel} sm={4}>
-                                Opening Date
-                            </Col>
-                            <Col sm={6}>
-                                <input type="date" value={this.state.openingDate} onChange={this.setOpeningDate} />
-                            </Col>
-                        </FormGroup>
-                     </Form>
+                        <Form horizontal onSubmit={(e) => {this.handleSubmit(e)}}>
+                            <FormGroup controlId="name" onSubmit={(e) => {this.handleSubmit(e)}}>
+                                <Col componentClass={ControlLabel} sm={4}>
+                                    Name
+                                </Col>
+                                <Col sm={6}>
+                                    <FormControl value={this.state.name} onChange={(e) => {this.handleChange(e)}} placeholder="Name"/>
+                                </Col>
+                            </FormGroup>
+                            <FormGroup controlId="shortName">
+                                <Col componentClass={ControlLabel} sm={4}>
+                                    Short Name
+                                </Col>
+                                <Col sm={6}>
+                                    <FormControl value={this.state.shortName} onChange={(e) => {this.handleChange(e)}} placeholder="Short Name" />
+                                </Col>
+                            </FormGroup>
+                            <FormGroup controlId="date">
+                                <Col componentClass={ControlLabel} sm={4}>
+                                    Opening Date
+                                </Col>
+                                <Col sm={6}>
+                                    <input type="date" value={this.state.openingDate} onChange={this.setOpeningDate} />
+                                </Col>
+                            </FormGroup>
+                        </Form>
 
                     </Modal.Body>
                     <Modal.Footer>
@@ -97,7 +100,7 @@ class AddOrg extends React.Component {
                             onClick={() => {this.handleSubmit()}}
                         >Submit</Button>
                         <Button
-                            onClick={() => {this.props.showAddOrgModal(false)}}
+                            onClick={() => {this.props.showChangeOrgModal(false)}}
                         >Close</Button>
                     </Modal.Footer>
                 </Modal>
@@ -116,7 +119,7 @@ class AddOrg extends React.Component {
 
 const mapStateToProps = (state) => {
     return{
-        addOrg : state.addOrg
+        changeOrg : state.changeOrg
     }
 
 };
@@ -124,9 +127,9 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
 
-        showAddOrgModal: b => dispatch(showAddOrgModal(b)),
+        showChangeOrgModal : (b) => {dispatch(showChangeOrgModal(b))},
         addNewOganisationUnit: (name, shortName, openingDate) => dispatch(addNewOganisationUnit(name, shortName, openingDate))
-        
+
     }
 };
 

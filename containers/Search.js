@@ -323,7 +323,7 @@ const mapStateToProps = (state) => {
         organisations: state.organisations,
         search: state.search,
         markers: state.markers,
-        ui : state.ui,
+        addOrg : state.addOrg,
         chiefdomBorders: state.chiefdomBorder,
         districtBorders: state.districtBorder,
         chiefdomBorderPolygons: state.chiefdomBorderPolygon,

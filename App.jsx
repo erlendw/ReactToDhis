@@ -6,6 +6,7 @@ import { CreateStore } from 'redux';
 import Search from './containers/Search'
 import AddOrg from './containers/AddOrg'
 import Header from './containers/Header'
+import Map from './containers/Map'
 
 
 
@@ -16,16 +17,16 @@ class App extends React.Component {
     render() {
         return (
             
-           /*<Router history={browserHistory}>
+           <Router history={browserHistory}>
 
-                <Route path="/" component={Header}/>
+                <Route path="/" component={Map}/>
 
-            </Router>*/
+            </Router>
 
-  <div>
+        /*<div>
                 <Header />
                 <Search />
-            </div>
+            </div>*/
         );
     }
 }
