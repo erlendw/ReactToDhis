@@ -7,14 +7,16 @@ import React from 'react'
 import ReactDOM from 'react-dom';
 import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
-import {recievedOrganisations, fetchOrganisations, showAddOrgModal} from '../actions/actions'
+import {recievedOrganisations, fetchOrganisations, showAddOrgModal, showChangeOrgModal} from '../actions/actions'
 import AddOrg from './AddOrg'
+import ChangeOrg from './ChangeOrg'
+
 
 
 class Header extends React.Component {
 
     componentWillMount(){
-       // this.props.showAddOrgModal(true);
+       //this.props.showChangeOrgModal(true);
     }
 
 
@@ -41,7 +43,7 @@ class Header extends React.Component {
                 </Navbar>
                 
                 <AddOrg/>
-                
+                <ChangeOrg/>
             </div>
         );
     }
@@ -50,13 +52,14 @@ class Header extends React.Component {
 
 const mapStateToProps = (state) => {
     return{
-        ui : state.ui
+        addOrg : state.addOrg
     }
 };
 
 const mapDispatchToProps = (dispatch) => {
     return {
-       showAddOrgModal : (b) => {dispatch(showAddOrgModal(b))}
+       showAddOrgModal : (b) => {dispatch(showAddOrgModal(b))},
+       showChangeOrgModal : (b) => {dispatch(showChangeOrgModal(b))}
     }
 };
 

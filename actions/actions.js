@@ -6,6 +6,7 @@ import btoa from 'btoa'
 import Axios from 'axios'
 import async from 'async'
 import superagent from 'superagent'
+import Perf from 'react-addons-perf'
 
 // https://play.dhis2.org/demo/api/organisationUnits.json?filter=id:eq:vWbkYPRmKyS&fields=id,displayName,level,coordinates,children&paging=false&level=3
 const serverUrl = dhisAPI + '/api/organisationUnits.json?fields=id,displayName,level,coordinates,parent[displayName,parent[displayName]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
@@ -13,14 +14,10 @@ const serverUrl = dhisAPI + '/api/organisationUnits.json?fields=id,displayName,l
 
 //const serverUrl = 'https://play.dhis2.org/test/api/organisationUnits.json?fields=id,displayName,level,coordinates,parent[displayName,parent[displayName]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
 
-
-
-
 //const shortServerUrl = 'https://play.dhis2.org/test/api/organisationUnits';
 //const serverUrl = 'https://play.dhis2.org/test/api/organisationUnits.json?filter=id:eq:vWbkYPRmKyS&fields=coordinates,displayName';
 
 const basicAuth = `Basic ${btoa('admin:district')}`;
-
 
 const fetchOptions = {
     method: 'GET',
@@ -29,8 +26,6 @@ const fetchOptions = {
         'Content-Type': 'application/json'
     }
 };
-
-
 
 
 export const recievedOrganisations = (data) => {  
@@ -44,6 +39,51 @@ export const updateSearch = (data) => {
     return{
         type: "UPDATE_SEARCH",
         payload: data
+    }
+};
+
+export const getChiefdomBorderSuccess = (cords) => {
+    return {
+        type: 'GET_CHIEFDOM_BORDER_SUCCESS',
+        cords
+    }
+};
+
+export const getDistrictBorderSuccess = (cords) => {
+    return {
+        type: 'GET_DISTRICT_BORDER_SUCCESS',
+        cords
+    }
+};
+
+
+
+export const showAddOrgModal = (b) => { //b === boolean
+    console.log(b);
+    return {
+        type: 'ADDORG_UPDATED',
+        payload : b
+    }
+};
+
+export const showChangeOrgModal = (b) => { //b === boolean
+    return {
+        type: 'CHANGEORG_UPDATED',
+        payload : b
+    }
+};
+
+export const updateChiefdomBorderPolygons = (polys) => {
+    return{
+        type: 'UPDATE_CHIEFDOM_BORDER_POLYGON',
+        polys
+    }
+};
+
+export const updateDistrictBorderPolygons = (polys) => {
+    return{
+        type: 'UPDATE_CHIEFDOM_BORDER_POLYGON',
+        polys
     }
 };
 
@@ -76,7 +116,7 @@ export const createAllMarkers = (allFacilities, map) =>{
         // Create the marker
         var marker = new google.maps.Marker({
             position: item.coordinatesObject[0],
-            icon: 'marker.png',
+            icon: 'http://i.imgur.com/6SuUCSW.png',
             map: map
         });
 
@@ -99,7 +139,7 @@ export const createAllMarkers = (allFacilities, map) =>{
         allMarkers
     }
 
-}
+};
 
 export const getLocationSuccess = (coordinates, map, item) => {
 
@@ -133,7 +173,7 @@ export const getLocationSuccess = (coordinates, map, item) => {
     // Create the marker
     var marker = new google.maps.Marker({
         position: coordinates,
-        icon: 'marker.png',
+        icon: 'http://i.imgur.com/6SuUCSW.png',
         map: map
     });
 
@@ -153,29 +193,8 @@ export const getLocationSuccess = (coordinates, map, item) => {
     }
 };
 
-export const getChiefdomBorderSuccess = (cords) => {
-  return {
-    type: 'GET_CHIEFDOM_BORDER_SUCCESS',
-    cords
-  }
-};
-
-export const getDistrictBorderSuccess = (cords) => {
-  return {
-    type: 'GET_DISTRICT_BORDER_SUCCESS',
-    cords
-  }
-};
 
 
-
-export const showAddOrgModal = (b) => { //b === boolean
-    console.log(b);
-    return {
-        type: 'ADDORG_UPDATED',
-        payload : b
-    }
-};
 
 export const addDistrictBorderPolygon = (cords, item, map, dispatch) => {
     var districtBorder = new google.maps.Polygon({
@@ -294,7 +313,7 @@ export const createChildPolygon = (childCords, map, child) =>{
         type: 'ADD_CHIEFDOM_BORDER_POLYGON',
         chiefdomBorder
     }
-}
+};
 
 export const addChiefdomBorderPolygon = (cords, item, map) => {
 
@@ -338,19 +357,7 @@ export const addChiefdomBorderPolygon = (cords, item, map) => {
     }
 };
 
-export const updateChiefdomBorderPolygons = (polys) => {
-    return{
-        type: 'UPDATE_CHIEFDOM_BORDER_POLYGON',
-        polys
-    }
-}
 
-export const updateDistrictBorderPolygons = (polys) => {
-    return{
-        type: 'UPDATE_CHIEFDOM_BORDER_POLYGON',
-        polys
-    }
-}
 
 
 
@@ -461,7 +468,7 @@ export const addNewOganisationUnit = (name, shortName, date) =>{
         var levelll = 4;
 
         var data = {"name":name, "shortName":shortName, "openingDate":date, "level":levelll, "displayName":name}
-
+        
         superagent.post(dhisAPI + '/api/organisationUnits?level=4')
             .send(data)
             .set('Authorization', basicAuth)
@@ -470,6 +477,7 @@ export const addNewOganisationUnit = (name, shortName, date) =>{
                 console.log(response);
 
             });
+
     }
 
 };
@@ -490,15 +498,17 @@ export const editOganisationUnit = (name, shortName, date, id) =>{
                 console.log(response);
 
             });
+
+
     }
 
 };
 
-
-
 export const fetchOrganisations = (map) => {
    
     return (dispatch) => {
+
+        Perf.start()
 
         return Axios.get(serverUrl, fetchOptions)
             .then(response => {
@@ -542,8 +552,9 @@ export const fetchOrganisations = (map) => {
                                 ut = {
                                     lng: Number(j[0]),
                                     lat: Number(j[1])
-                                }
-                                array.push(ut);                                
+                                };
+                                array.push(ut);  
+                                                          
                             }
                             else{                                             
                                 for(var i = 0; i < j.length; i+=1){
@@ -553,7 +564,7 @@ export const fetchOrganisations = (map) => {
                                             ut = {                                                          
                                                 lng: subC[0],
                                                 lat: subC[1]
-                                            } 
+                                            };
                                             bounds.extend(ut);
                                             temp.push(ut); 
                                         });
@@ -580,13 +591,18 @@ export const fetchOrganisations = (map) => {
                         }
                     }
                 });
+
+
+                var measurements = Perf.stop();
+
+                Perf.printExclusive(measurements)
+
                 dispatch(recievedOrganisations(response.data.organisationUnits));
                 dispatch(createAllMarkers(allFacilities, map));
-                dispatch(updateSearch(search));       
+                dispatch(updateSearch(search));
             })
             .catch(error => {
                 throw(error);
             });
     }
 };
-

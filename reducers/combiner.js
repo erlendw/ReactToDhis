@@ -6,7 +6,8 @@ import {combineReducers} from 'redux'
 import organisations from './organisation';
 import search from './search';
 import markers from './marker';
-import ui from './ui';
+import addOrg from './addOrg';
+import changeOrg from './changeOrg';
 import chiefdomBorder from './chiefdomBorder';
 import districtBorder from './districtBorder';
 import districtBorderPolygon from './districtBorderPolygon'
@@ -19,7 +20,8 @@ const mainReducer = combineReducers({
     organisations,
     search,
     markers,
-    ui,
+    addOrg,
+    changeOrg,
     chiefdomBorder,
     districtBorder,
     chiefdomBorderPolygon,
