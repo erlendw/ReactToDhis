@@ -7,7 +7,7 @@ import organisations from './organisation';
 import search from './search';
 import markers from './marker';
 import addOrg from './addOrg';
-import currentOrg from '../../ReactToDhis_3/reducers/currentOrg'
+import currentOrg from './currentOrg'
 import changeOrg from './changeOrg';
 import chiefdomBorder from './chiefdomBorder';
 import districtBorder from './districtBorder';
