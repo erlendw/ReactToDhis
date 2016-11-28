@@ -9,10 +9,10 @@ import superagent from 'superagent'
 import Perf from 'react-addons-perf'
 
 // https://play.dhis2.org/demo/api/organisationUnits.json?filter=id:eq:vWbkYPRmKyS&fields=id,displayName,level,coordinates,children&paging=false&level=3
-//const serverUrl = dhisAPI + '/api/organisationUnits.json?fields=id,displayName,level,coordinates,parent[displayName,parent[displayName]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
+const serverUrl = dhisAPI + '/api/organisationUnits.json?fields=id,displayName,level,coordinates,parent[displayName,parent[displayName]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
 //const serverUrl = 'localhost:8080/api/organisationUnits.json?fields=id,displayName,level,coordinates,parent[displayName,parent[displayName]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
 
-const serverUrl = 'https://play.dhis2.org/test/api/organisationUnits.json?fields=id,displayName,level,coordinates,parent[displayName,parent[displayName]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
+//const serverUrl = 'https://play.dhis2.org/test/api/organisationUnits.json?fields=id,displayName,level,coordinates,parent[displayName,parent[displayName]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
 
 //const shortServerUrl = 'https://play.dhis2.org/test/api/organisationUnits';
 //const serverUrl = 'https://play.dhis2.org/test/api/organisationUnits.json?filter=id:eq:vWbkYPRmKyS&fields=coordinates,displayName';
@@ -468,7 +468,7 @@ export const addNewOganisationUnit = (name, shortName, date) =>{
         var levelll = 4;
 
         var data = {"name":name, "shortName":shortName, "openingDate":date, "level":levelll, "displayName":name}
-        /*
+        
         superagent.post(dhisAPI + '/api/organisationUnits?level=4')
             .send(data)
             .set('Authorization', basicAuth)
@@ -477,7 +477,7 @@ export const addNewOganisationUnit = (name, shortName, date) =>{
                 console.log(response);
 
             });
-*/
+
     }
 
 };
@@ -489,7 +489,7 @@ export const editOganisationUnit = (name, shortName, date, id) =>{
         var levelll = 4;
 
         var datatosend = {"name":name, "shortName":shortName, "openingDate":date, "level":levelll, "displayName":name};
-        /*
+
         superagent.put(dhisAPI + '/api/organisationUnits/' + id)
             .send(datatosend)
             .set('Authorization', basicAuth)
@@ -499,7 +499,7 @@ export const editOganisationUnit = (name, shortName, date, id) =>{
 
             });
 
-            */
+
     }
 
 };
