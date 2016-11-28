@@ -35,6 +35,13 @@ export const recievedOrganisations = (data) => {
     }
 };
 
+export const updateCurrentOrg = (org) => {
+    return {
+        type: 'CURRENTORG_UPDATED',
+        payload : org
+    }
+};
+
 export const updateSearch = (data) => {
     return{
         type: "UPDATE_SEARCH",
