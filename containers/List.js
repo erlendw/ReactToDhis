@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Button,Table,Navbar,Nav,NavItem,Form,ControlLabel, NavDropdown, FormGroup,FormControl, NavbarBrand, MenuItem, Accordion, Panel} from 'react-bootstrap';
 import * as actions from '../actions/actions';
 
-export function List({ organisations = [], onItemClick, props, map, singles}) {
+export function List({ organisations = [], onItemClick, props, map, singles, showchangeModalYo}) {
 
     const listItems = organisations
         .map((organisation,i) => {
@@ -15,7 +15,7 @@ export function List({ organisations = [], onItemClick, props, map, singles}) {
                   </div>
                   <div className="showhide" id={organisation.id}>
                       {organisation.id}<br/>
-                      <button type="button" onClick={() => props.updateCurrentOrg(organisation)}>Edit</button>
+                      <button type="button" onClick={() => showchangeModalYo(props, organisation)}>Edit</button>
                     
                       
 

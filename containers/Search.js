@@ -8,7 +8,7 @@ import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
 import jquery from 'jquery'
 import loadGoogleMapsAPI from 'load-google-maps-api';
-import {recievedOrganisations, fetchOrganisations, findMatchingElements, getLocation, changeLevel, showAddOrgModal, showDistrictBorder, showChiefdomBorder, showNoBorder, createChildPolygon, updateSearch, addNewOganisationUnit, editOganisationUnit, updateCurrentOrg} from '../actions/actions'
+import {recievedOrganisations, fetchOrganisations, findMatchingElements, getLocation, changeLevel, showAddOrgModal, showDistrictBorder, showChiefdomBorder, showNoBorder, createChildPolygon, updateSearch, addNewOganisationUnit, editOganisationUnit, updateCurrentOrg, showChangeOrgModal} from '../actions/actions'
 import List from './List';
 
 var markerImg = 'marker.png';
@@ -62,6 +62,11 @@ class Search extends React.Component {
         }).catch((err) => {
             console.error(err);
         });
+    }
+
+    showchangeModalYo(props, organisation){
+        props.updateCurrentOrg(organisation);
+        props.showChangeOrgModal(true);
     }
 
     onItemClick(item, parent, map, singles) {
@@ -282,6 +287,7 @@ class Search extends React.Component {
                                     props={this.props}
                                     map={map}
                                     singles ={singlePolygons}
+                                    showchangeModalYo={this.showchangeModalYo}
                                 />
                             </div>
 
@@ -321,7 +327,8 @@ const mapDispatchToProps = (dispatch) => {
         updateSearch: (data) => dispatch(updateSearch(data)),
         addNewOganisationUnit: (name, shortName, date) => dispatch(addNewOganisationUnit(name, shortName, date)),
         editOganisationUnit: (name, shortName, date, id) => dispatch(editOganisationUnit(name, shortName, date, id)),
-        updateCurrentOrg: (org) => dispatch(updateCurrentOrg(org))
+        updateCurrentOrg: (org) => dispatch(updateCurrentOrg(org)),
+        showChangeOrgModal: (b) => dispatch(showChangeOrgModal(b))
     }
 };
 

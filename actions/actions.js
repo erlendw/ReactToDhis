@@ -36,7 +36,7 @@ export const recievedOrganisations = (data) => {
 };
 
 export const updateCurrentOrg = (org) => {
-    showChangeOrgModal(true);
+    //owChangeOrgModal(true);
     console.log("farts");
     console.log(org);
     return {
