@@ -16,6 +16,7 @@ var map;
 var chiefdomPolygons = [];
 var districtPolygons = [];
 var singlePolygons = [];
+var singleMarkers =[];
 
 class Search extends React.Component {
     constructor(props, context) {
@@ -80,16 +81,19 @@ class Search extends React.Component {
         or a chiefdom and displays a facility as a 
         marker.
         */
-
-        //empty the map
-        parent.showNoBorders(parent, map, singles);
-
+        
         // get the list element
         var element = document.getElementById(item.id);
 
         // If open, close it
         if(element.style.display == 'inline-block'){            
             element.style.display = 'none';
+
+            //remove the markers
+            singleMarkers.forEach((mrkr) =>{
+                mrkr.setMap(null);
+            });
+            
             return;
         }
 
@@ -106,6 +110,11 @@ class Search extends React.Component {
                 window.alert("DHIS2 does not have coordinates for this unit");
                 return;
             }
+
+            //remove existing markers
+            singleMarkers.forEach((mrkr) =>{
+                mrkr.setMap(null);
+            });
 
             // Taking into account that some organisational
             // units have invalid parent data
@@ -145,6 +154,7 @@ class Search extends React.Component {
             marker.addListener('click', function() {
                 infowindow.open(map, marker);
             });
+            singleMarkers.push(marker);
 
         }
 
