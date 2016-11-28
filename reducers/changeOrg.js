@@ -9,7 +9,6 @@
 export default (state = false, action) => {
     switch (action.type){
         case 'CHANGEORG_UPDATED':
-            console.log(action.type)
             return action.payload;
         default : return state;
     }

@@ -15,6 +15,7 @@ export function List({ organisations = [], onItemClick, props, map, singles}) {
                   </div>
                   <div className="showhide" id={organisation.id}>
                       {organisation.id}<br/>
+                      <button type="button" onClick={() => props.updateCurrentOrg(organisation)}>Edit</button>
                     
                       
 

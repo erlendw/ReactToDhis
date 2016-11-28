@@ -36,6 +36,9 @@ export const recievedOrganisations = (data) => {
 };
 
 export const updateCurrentOrg = (org) => {
+    showChangeOrgModal(true);
+    console.log("farts");
+    console.log(org);
     return {
         type: 'CURRENTORG_UPDATED',
         payload : org

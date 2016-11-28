@@ -6,7 +6,6 @@
 
 export default (state = false, action) => {
 
-    console.log(state)
 
     switch (action.type){
         case 'ADDORG_UPDATED':

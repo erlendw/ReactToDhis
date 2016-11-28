@@ -8,7 +8,7 @@ import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
 import jquery from 'jquery'
 import loadGoogleMapsAPI from 'load-google-maps-api';
-import {recievedOrganisations, fetchOrganisations, findMatchingElements, getLocation, changeLevel, showAddOrgModal, showDistrictBorder, showChiefdomBorder, showNoBorder, createChildPolygon, updateSearch, addNewOganisationUnit, editOganisationUnit} from '../actions/actions'
+import {recievedOrganisations, fetchOrganisations, findMatchingElements, getLocation, changeLevel, showAddOrgModal, showDistrictBorder, showChiefdomBorder, showNoBorder, createChildPolygon, updateSearch, addNewOganisationUnit, editOganisationUnit, updateCurrentOrg} from '../actions/actions'
 import List from './List';
 
 var markerImg = 'marker.png';
@@ -320,7 +320,8 @@ const mapDispatchToProps = (dispatch) => {
         createChildPolygon: (cords, map, child) => dispatch(createChildPolygon(cords,map, child)),
         updateSearch: (data) => dispatch(updateSearch(data)),
         addNewOganisationUnit: (name, shortName, date) => dispatch(addNewOganisationUnit(name, shortName, date)),
-        editOganisationUnit: (name, shortName, date, id) => dispatch(editOganisationUnit(name, shortName, date, id))
+        editOganisationUnit: (name, shortName, date, id) => dispatch(editOganisationUnit(name, shortName, date, id)),
+        updateCurrentOrg: (org) => dispatch(updateCurrentOrg(org))
     }
 };
 
