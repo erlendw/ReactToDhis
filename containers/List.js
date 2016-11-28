@@ -10,12 +10,13 @@ export function List({ organisations = [], onItemClick, props, map, singles}) {
            return(
             <li key={organisation.id} className="list-element">
               <div className="list-element-wrapper">
-                  <div>
-                      <a onClick={() => onItemClick(organisation, props, map, singles)}>{organisation.displayName}</a>
+                  <div className="list-element-header" onClick={() => onItemClick(organisation, props, map, singles)}>
+                      {organisation.displayName}
                   </div>
                   <div className="showhide" id={organisation.id}>
                       {organisation.id}<br/>
-                      <button type="button">Edit</button>
+                    
+                      
 
                   </div>
                 </div>
@@ -25,7 +26,7 @@ export function List({ organisations = [], onItemClick, props, map, singles}) {
         });
 
     return (
-       <ul>
+       <ul className="list-o-rama">
         {listItems}
        </ul>
     );

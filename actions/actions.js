@@ -6,7 +6,7 @@ import btoa from 'btoa'
 import Axios from 'axios'
 import async from 'async'
 import superagent from 'superagent'
-import Perf from 'react-addons-perf'
+
 
 // https://play.dhis2.org/demo/api/organisationUnits.json?filter=id:eq:vWbkYPRmKyS&fields=id,displayName,level,coordinates,children&paging=false&level=3
 const serverUrl = dhisAPI + '/api/organisationUnits.json?fields=id,displayName,level,coordinates,parent[displayName,parent[displayName]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
@@ -508,7 +508,7 @@ export const fetchOrganisations = (map) => {
    
     return (dispatch) => {
 
-        Perf.start()
+  
 
         return Axios.get(serverUrl, fetchOptions)
             .then(response => {
@@ -593,9 +593,6 @@ export const fetchOrganisations = (map) => {
                 });
 
 
-                var measurements = Perf.stop();
-
-                Perf.printExclusive(measurements)
 
                 dispatch(recievedOrganisations(response.data.organisationUnits));
                 dispatch(createAllMarkers(allFacilities, map));
