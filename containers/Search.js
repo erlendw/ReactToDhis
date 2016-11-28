@@ -91,9 +91,11 @@ class Search extends React.Component {
 
             //remove the markers
             singleMarkers.forEach((mrkr) =>{
-                mrkr.setMap(null);
+                if(item.level == 4 && mrkr.label == item.displayName){                   
+                    mrkr.setMap(null);
+                }
             });
-            
+
             return;
         }
 
@@ -110,11 +112,6 @@ class Search extends React.Component {
                 window.alert("DHIS2 does not have coordinates for this unit");
                 return;
             }
-
-            //remove existing markers
-            singleMarkers.forEach((mrkr) =>{
-                mrkr.setMap(null);
-            });
 
             // Taking into account that some organisational
             // units have invalid parent data
@@ -193,7 +190,7 @@ class Search extends React.Component {
             // Create the info window
             var infowindow = new google.maps.InfoWindow({
                 content: info,
-                position: bounds.getCenter()
+                position: item.centerCoordinates
             });
 
             // Add a listene to the polygon so when clicked it 
