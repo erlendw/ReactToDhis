@@ -547,7 +547,8 @@ export const addNewOganisationUnit = (name, shortName, displayName, displayShort
         date = new Date(); // kommenter denne ut
 
         var data = {"name":name, "shortName":shortName, "displayName":displayName, "displayShortName":displayShortName, "coordinates":cordsString, "openingDate":date, "level":level, "displayName":name}
-        
+        console.log(data);
+        /*
         superagent.post(dhisAPI + '/api/organisationUnits')
             .send(data)
             .set('Authorization', basicAuth)
@@ -558,12 +559,9 @@ export const addNewOganisationUnit = (name, shortName, displayName, displayShort
                 if(response.status == 201){
                     dispatch(addOrganisation(data));
                 }
-
-
             });
-
+*/
     }
-
 };
 
 
