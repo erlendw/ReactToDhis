@@ -70,31 +70,27 @@ class AddOrg extends React.Component {
         switch(org.level){
 
             case 1:
-                modalToShow = <ContryForm/>
+                modalToShow = <ContryForm/>;
                 break;
             case 2:
-                console.log()
-                modalToShow = <DistrictForm/>
+                modalToShow = <DistrictForm/>;
                 break;
             case 3:
-                modalToShow = <ChiefdomForm/>
+                modalToShow = <ChiefdomForm/>;
                 break;
             case 4:
-                modalToShow = <FacilityForm/>
+                modalToShow = <FacilityForm/>;
                 break;
             default:
                 break
 
         }
 
-
-
         return(
             <div>
                 <Modal show={this.props.changeOrg} >
+                    
                     {modalToShow}
-
-
                     <Modal.Footer>
                         <Button
                             onClick={() => {this.handleSubmit()}}
