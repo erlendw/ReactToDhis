@@ -20,7 +20,8 @@ class AddOrg extends React.Component {
             displayName : '',
             diasplayShortName : '',
             longitude : '',
-            lattitude: ''
+            lattitude: '',
+            date:''
 
         };
 
@@ -37,7 +38,8 @@ class AddOrg extends React.Component {
             displayName : '',
             diasplayShortName : '',
             longitude : '',
-            lattitude: ''
+            lattitude: '',
+            date:''
         })
 
         this.props.showAddOrgModal(false)
@@ -47,13 +49,14 @@ class AddOrg extends React.Component {
 
     handleSubmit(){
 
-        this.props.addNewOganisationUnit(this.state.name, this.state.shortName, this.state.date);
+        this.props.addNewOganisationUnit(this.state.name, this.state.shortName, this.state.displayName, this.state.diasplayShortName, this.state.longitude, this.state.lattitude, this.state.date);
         this.props.showAddOrgModal(false)
     }
 
     setOpeningDate(event) {
         console.log(event.target.value)
         this.setState({ date : event.target.value });
+        console.log(this.state.date);
     }
 
     handleChange(e){

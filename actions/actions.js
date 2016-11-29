@@ -38,6 +38,14 @@ export const recievedOrganisations = (data) => {
     }
 };
 
+export const addOrganisation = (data) => {  
+    return{
+        type: "ADD_ORGANISATION",
+        payload: data
+    }
+};
+
+
 export const updateCurrentOrg = (org) => {
     //owChangeOrgModal(true);
     return {
@@ -530,19 +538,27 @@ export const showNoBorder = (props, map, singles) => {
 
 
 
-export const addNewOganisationUnit = (name, shortName, date) =>{
+export const addNewOganisationUnit = (name, shortName, displayName, displayShortName, longitude, lattitude, date) =>{
 
     return (dispatch) => {
-        var levelll = 4;
+        var level = 4;
+        var cords = {"lng":longitude, "lat": lattitude};
+        var cordsString = "[ "+longitude+", "+lattitude+" ]";
+        date = new Date(); // kommenter denne ut
 
-        var data = {"name":name, "shortName":shortName, "openingDate":date, "level":levelll, "displayName":name}
+        var data = {"name":name, "shortName":shortName, "displayName":displayName, "displayShortName":displayShortName, "coordinates":cordsString, "openingDate":date, "level":level, "displayName":name}
         
-        superagent.post(dhisAPI + '/api/organisationUnits?level=4')
+        superagent.post(dhisAPI + '/api/organisationUnits')
             .send(data)
             .set('Authorization', basicAuth)
             .set('Accept', 'application/json')
             .end(function(err, response){
                 console.log(response);
+                console.log(response.data);
+                if(response.status == 201){
+                    dispatch(addOrganisation(data));
+                }
+
 
             });
 

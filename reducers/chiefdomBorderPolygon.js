@@ -1,9 +1,11 @@
 export default (state = [], action) => {
-
+	var ut = [...state];
 	if(action.type == 'SHOW_ALL_CHILD_POLYGONS'){
 		console.log(...state);
-		action.polys.forEach((poly)=>{
+		action.polys.forEach((wagner)=>{
 			console.log("fartbucket");
+			ut.push(wagner);
+
 		});
 	}
 	
@@ -15,7 +17,7 @@ export default (state = [], action) => {
     case 'UPDATE_CHIEFDOM_BORDER_POLYGON':
     	return action.polys
     case 'SHOW_ALL_CHILD_POLYGONS':
-    	return action.polys
+    	return ut
     default:
           return state;
   }

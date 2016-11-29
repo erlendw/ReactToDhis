@@ -28,7 +28,8 @@ const mainReducer = combineReducers({
     districtBorder,
     chiefdomBorderPolygon,
     districtBorderPolygon,
-    currentOrg
+    currentOrg,
+    showHelp
 
 });
 

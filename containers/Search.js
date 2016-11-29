@@ -53,7 +53,7 @@ class Search extends React.Component {
                 this.props.showAddOrgModal(true);
             });
 
-           
+
 
             // Get all organisational units
             this.props.fetchOrganisations(map).
@@ -291,6 +291,7 @@ class Search extends React.Component {
                             <ControlLabel>Search:</ControlLabel><br/>
                             <select id="select" onChange={(e) => this.props.changeLevel(e,this.props.search,this.props.organisations)} defaultValue="2">
                                 <option value="" disabled>Filter levels--</option>
+                                <option value="5">All Levels</option>
                                 <option value="2">District</option>
                                 <option value="3">Chiefdoms</option>
                                 <option value="4">Facilities</option>
