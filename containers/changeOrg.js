@@ -10,10 +10,14 @@ import {connect} from 'react-redux';
 import {showChangeOrgModal, addNewOganisationUnit} from '../actions/actions'
 
 
-import {Modal,OverlayTrigger, Button, ControlLabel, FormControl, FormGroup, Col, Form} from 'react-bootstrap'
+import {Modal, Button} from 'react-bootstrap'
+
+import DistrictForm from './forms/districtForm'
+import ContryForm from './forms/contryForm'
+import FacilityForm from './forms/facilityForm'
+import ChiefdomForm from './forms/chiefdomForm'
 
 class AddOrg extends React.Component {
-
     constructor(){
         super();
         this.state = {
@@ -58,59 +62,39 @@ class AddOrg extends React.Component {
         }
     }
 
-
-    componentDidMount(){
-        var org = this.props.currentOrg;
-        console.log(org)
-    }
-
     render(){
+
+        var org = this.props.currentOrg;
+        var modalToShow = null;
+
+        switch(org.level){
+
+            case 1:
+                modalToShow = <ContryForm/>;
+                break;
+            case 2:
+                modalToShow = <DistrictForm/>;
+                break;
+            case 3:
+                modalToShow = <ChiefdomForm/>;
+                break;
+            case 4:
+                modalToShow = <FacilityForm/>;
+                break;
+            default:
+                break
+
+        }
 
         return(
             <div>
                 <Modal show={this.props.changeOrg} >
-                    <Modal.Header>
-                        <Modal.Title>Edit </Modal.Title>
-                    </Modal.Header>
                     
-                    <Modal.Body>
-                        <Form horizontal onSubmit={(e) => {this.handleSubmit(e)}}>
-                            <FormGroup controlId="name" onSubmit={(e) => {this.handleSubmit(e)}}>
-                                <Col componentClass={ControlLabel} sm={4}>
-                                    Name
-                                </Col>
-                                <Col sm={6}>
-                                    <FormControl value={this.state.name} onChange={(e) => {this.handleChange(e)}} placeholder={this.props.currentOrg.displayName}/>
-                                </Col>
-                            </FormGroup>
-                            <FormGroup controlId="shortName">
-                                <Col componentClass={ControlLabel} sm={4}>
-                                    Short Name
-                                </Col>
-                                <Col sm={6}>
-                                    <FormControl value={this.state.shortName} onChange={(e) => {this.handleChange(e)}} placeholder="Short Name" />
-                                </Col>
-                            </FormGroup>
-                            <FormGroup controlId="date">
-                                <Col componentClass={ControlLabel} sm={4}>
-                                    Opening Date was {this.props.currentOrg.openingDate}
-                                </Col>
-                                <Col sm={6}>
-                                    <input type="date" value={this.state.openingDate} placeholder={this.props.currentOrg.openingDate} onChange={this.setOpeningDate} />
-                                </Col>
-                            </FormGroup>
-                        </Form>
+                    {modalToShow}
 
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button
-                            onClick={() => {this.handleSubmit()}}
-                        >Submit</Button>
-                        <Button
-                            onClick={() => {this.props.showChangeOrgModal(false)}}
-                        >Close</Button>
-                    </Modal.Footer>
                 </Modal>
+
+
 
 
 
