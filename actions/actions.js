@@ -102,6 +102,13 @@ export const updateDistrictBorderPolygons = (polys) => {
     }
 };
 
+export const showAllChildPolygons = (polys) => {
+    return{
+        type: 'SHOW_ALL_CHILD_POLYGONS',
+        polys
+    }
+};
+
 export const createAllMarkers = (allFacilities, map) =>{
 
     var allMarkers = [];
@@ -229,13 +236,13 @@ export const addDistrictBorderPolygon = (cords, item, map, dispatch) => {
         map.setCenter(item.centerCoordinates);
 
         var newSearch = [];
-
+        var allChildPolygons = [];
         item.children.forEach(function eachChild(child){
             if(child != undefined ){
                 if(child.coordinates != undefined){
                     
                     var j = JSON.parse(child.coordinates);
-
+                    var array = [];
                     for(var i = 0; i < j.length; i+=1){
                         if(j[i].length != undefined){
                             
@@ -243,18 +250,75 @@ export const addDistrictBorderPolygon = (cords, item, map, dispatch) => {
                                 console.log(child.displayName);
                             }
                             else{
-                                dispatch(createChildPolygon(j[i],map, child));
+                                //dispatch(createChildPolygon(j[i],map, child));
+
+
+                                var bounds = new google.maps.LatLngBounds();
+                                var temp = [];   
+
+                                j[i].forEach((c) => {
+                                    c.forEach((subC)=>{
+
+                                        var ut = {                                                          
+                                            lng: subC[0],
+                                            lat: subC[1]
+                                        } 
+                                        bounds.extend(ut);
+                                        temp.push(ut); 
+                                    });
+
+                                    var info =  '<div id="content">'+
+                                                    '<div id="siteNotice">'+
+                                                    '</div>'+
+                                                    '<h2 id="secondHeading" class="secondHeading">'+ child.displayName+'</h2>'+
+                                                    '<div id="bodyContent">'+
+                                                    '<p><b>Facilities in this Chiefdom: </b></p>'+
+                                                    '<p>';
+
+                                    child.children.forEach((child) => {
+                                        info += child.displayName + '<br/>'
+                                    });
+
+                                    info += '</p>'+'</div>'+'</div>';
+                                                              
+
+                                    var chiefdomBorder = new google.maps.Polygon({
+                                        paths: temp,
+                                        strokeColor: '#008822',
+                                        strokeOpacity: 0.8,
+                                        strokeWeight: 2,
+                                        fillColor: '#008822',
+                                        fillOpacity: 0.2,
+                                        map: map,
+                                        type: "chiefdomAddOn"
+                                    });
+
+                                    var infowindow = new google.maps.InfoWindow({
+                                        content: info,
+                                        position: bounds.getCenter()
+                                    });
+
+                                    chiefdomBorder.addListener('click', function(event) {
+                                        map.setZoom(10);
+                                        map.setCenter(bounds.getCenter());
+                                        infowindow.open(map);
+                                    });
+                                    array.push(temp);
+                                    allChildPolygons.push(chiefdomBorder);
+                                                              
+                                });
                             }
                         }
                     }
                                  
                     if(child.parent == undefined)
                         child.parent = {displayName: "no parent", parent: {displayName: "no parent"}}
-                    
+                    child.coordinatesObject = array;
                     newSearch.push(child);
                 }
             }
         });
+        dispatch(showAllChildPolygons(allChildPolygons));
 
         dispatch(updateSearch(newSearch));
         
