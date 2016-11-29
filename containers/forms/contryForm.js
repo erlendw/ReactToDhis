@@ -69,7 +69,7 @@ class contryForm extends React.Component {
                     displayName : e.target.value
                 });
                 break;
-            case 'diasplayShortName':
+            case 'displayShortName':
                 console.log(e.target.value);
                 this.setState({
                     diasplayShortName : e.target.value
@@ -120,7 +120,7 @@ class contryForm extends React.Component {
                                 Short display name
                             </Col>
                             <Col sm={6}>
-                                <FormControl value={this.state.diasplayShortName} onChange={(e) => {this.handleChange(e)}} placeholder={this.props.currentOrg.displayShortName} />
+                                <FormControl value={this.state.displayShortName} onChange={(e) => {this.handleChange(e)}} placeholder={this.props.currentOrg.displayShortName} />
                             </Col>
                         </FormGroup>
 

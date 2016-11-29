@@ -18,7 +18,7 @@ class AddOrg extends React.Component {
             name : '',
             shortName : '',
             displayName : '',
-            diasplayShortName : '',
+            displayShortName : '',
             longitude : '',
             lattitude: '',
             date:''
@@ -36,11 +36,11 @@ class AddOrg extends React.Component {
             name : '',
             shortName : '',
             displayName : '',
-            diasplayShortName : '',
+            displayShortName : '',
             longitude : '',
             lattitude: '',
             date:''
-        })
+        });
 
         this.props.showAddOrgModal(false)
 
@@ -49,53 +49,45 @@ class AddOrg extends React.Component {
 
     handleSubmit(){
 
-        this.props.addNewOganisationUnit(this.state.name, this.state.shortName, this.state.displayName, this.state.diasplayShortName, this.state.longitude, this.state.lattitude, this.state.date);
+        this.props.addNewOganisationUnit(this.state);
         this.props.showAddOrgModal(false)
     }
 
     setOpeningDate(event) {
-        console.log(event.target.value)
+        console.log(event.target.value);
         this.setState({ date : event.target.value });
         console.log(this.state.date);
     }
 
     handleChange(e){
-        console.log(e.target.id);
-
         switch (e.target.id){
 
             case 'name':
-                console.log(e.target.value);
                 this.setState({
                     name : e.target.value
                 });
                 break;
             case 'shortName':
-                console.log(e.target.value);
                 this.setState({
                     shortName : e.target.value
                 });
                 break;
             case 'displayName':
-                console.log(e.target.value);
                 this.setState({
                     displayName : e.target.value
                 });
                 break;
-            case 'diasplayShortName':
-                console.log(e.target.value);
+            case 'displayShortName':
                 this.setState({
-                    diasplayShortName : e.target.value
+                    displayShortName : e.target.value
                 });
                 break;
             case 'longitude':
-                console.log(e.target.value);
                 this.setState({
                     longitude : e.target.value
                 });
                 break;
             case 'lattitude':
-                console.log(e.target.value);
                 this.setState({
                     lattitude : e.target.value
                 });
@@ -111,9 +103,6 @@ class AddOrg extends React.Component {
                 lattitude: this.props.currentOrg.lattitude
             })
         }
-
-
-
     }
 
     render(){
@@ -150,12 +139,12 @@ class AddOrg extends React.Component {
                                         <FormControl value={this.state.displayName} onChange={(e) => {this.handleChange(e)}} placeholder="Input display name"/>
                                     </Col>
                                 </FormGroup>
-                                <FormGroup controlId="diasplayShortName">
+                                <FormGroup controlId="displayShortName">
                                     <Col componentClass={ControlLabel} sm={4}>
                                         Short display name
                                     </Col>
                                     <Col sm={6}>
-                                        <FormControl value={this.state.diasplayShortName} onChange={(e) => {this.handleChange(e)}} placeholder="Input short display name" />
+                                        <FormControl value={this.state.displayShortName} onChange={(e) => {this.handleChange(e)}} placeholder="Input short display name" />
                                     </Col>
                                 </FormGroup>
 
@@ -187,10 +176,6 @@ class AddOrg extends React.Component {
                                         <input type="date" value={this.state.openingDate} onChange={this.setOpeningDate} />
                                     </Col>
                                 </FormGroup>
-
-
-
-
                             </Form>
 
                     </Modal.Body>
@@ -205,12 +190,8 @@ class AddOrg extends React.Component {
                 </Modal>
 
             </div>
-
-
         )
-
     }
-
 }
 
 
