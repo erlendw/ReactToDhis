@@ -8,10 +8,17 @@ import async from 'async'
 import superagent from 'superagent'
 
 
+// https://play.dhis2.org/demo/api/organisationUnits.json?filter=id:eq:vWbkYPRmKyS&fields=id,displayName,level,coordinates,children&paging=false&level=3
 
-const serverUrl = dhisAPI + '/api/organisationUnits.json?fields=id,displayName,level,coordinates,parent[displayName,parent[displayName,parent[displayName]]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
+//const serverUrl = dhisAPI + '/api/organisationUnits.json?fields=id,displayName,level,coordinates,parent[displayName,parent[displayName,parent[displayName]]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
+//const serverUrl = dhisAPI + '/api/organisationUnits.json?fields=id,displayName,level,coordinates,parent[displayName,parent[displayName]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
 
-//const serverUrl = 'https://play.dhis2.org/test/api/organisationUnits.json?fields=id,displayName,name,shortName,displayShortName,level,coordinates,parent[displayName,parent[displayName]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
+//const serverUrl = 'localhost:8080/api/organisationUnits.json?fields=id,displayName,level,coordinates,parent[displayName,parent[displayName]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
+
+const serverUrl = 'https://play.dhis2.org/test/api/organisationUnits.json?fields=id,displayName,name,shortName,displayShortName,level,coordinates,parent[displayName,parent[displayName]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
+
+//const shortServerUrl = 'https://play.dhis2.org/test/api/organisationUnits';
+//const serverUrl = 'https://play.dhis2.org/test/api/organisationUnits.json?filter=id:eq:vWbkYPRmKyS&fields=coordinates,displayName';
 
 const basicAuth = `Basic ${btoa('admin:district')}`;
 
@@ -593,10 +600,10 @@ export const editOganisationUnit = (state) =>{
 };
 
 export const fetchOrganisations = (map) => {
-
+   
     return (dispatch) => {
 
-
+  
 
         return Axios.get(serverUrl, fetchOptions)
             .then(response => {
@@ -618,18 +625,18 @@ export const fetchOrganisations = (map) => {
                 async.forEach(response.data.organisationUnits, function asyncforeach(organisation, callback) {
 
                     if(organisation.coordinates != undefined && organisation.displayName != "mmm"){
-
+                      
                         var j = JSON.parse(organisation.coordinates);
                         var array = [];
                         var bounds = new google.maps.LatLngBounds();
 
-
+                  
                         if(j[0][0] == undefined){
-
-                            var ut = {
+                         
+                            var ut = {                                                        
                                 lng: j[0],
                                 lat: j[1]
-                            }
+                            } 
 
                             array.push(ut);
                             organisation.coordinatesObject = array;
@@ -640,39 +647,39 @@ export const fetchOrganisations = (map) => {
                                         allFacilities.push(organisation);
                                         //SierraLeone.push(organisation);
                                     }
-                                }
-                            }
+                                }                              
+                            }                      
                         }
                         else{
-
+                            
                             var ut={};
-                            if(typeof j[0] == "string" && j.length == 2){
-
+                            if(typeof j[0] == "string" && j.length == 2){    
+                                                   
                                 ut = {
                                     lng: Number(j[0]),
                                     lat: Number(j[1])
                                 };
-                                array.push(ut);
-
+                                array.push(ut);  
+                                                          
                             }
-                            else{
+                            else{                                             
                                 for(var i = 0; i < j.length; i+=1){
                                     var temp = [];
                                     j[i].forEach((c) => {
                                         c.forEach((subC)=>{
-                                            ut = {
+                                            ut = {                                                          
                                                 lng: subC[0],
                                                 lat: subC[1]
                                             };
                                             bounds.extend(ut);
-                                            temp.push(ut);
+                                            temp.push(ut); 
                                         });
-
+                                                                      
                                     });
                                     array.push(temp);
-                                }
+                                }                               
                             }
-                            if(organisation.level == 3){
+                            if(organisation.level == 3){  
                                 array.forEach((section) =>{
                                     if(section.length > 6){
                                         if(organisation.parent.parent != undefined){
@@ -681,9 +688,9 @@ export const fetchOrganisations = (map) => {
                                                 dispatch(addChiefdomBorderPolygon(section, organisation, map));
                                                 //SierraLeone.push(organisation);
                                             }
-                                        }
+                                        }                                       
                                     }
-                                });
+                                });                                           
                             }
                             else if(organisation.level == 2){
                                 array.forEach(function eachDistrict(section){
@@ -692,8 +699,8 @@ export const fetchOrganisations = (map) => {
                                             dispatch(addDistrictBorderPolygon(section, organisation, map, dispatch));
                                         }
                                     }
-                                });
-                            }
+                                });                               
+                            }                           
                             organisation.coordinatesObject = array;
                             organisation.centerCoordinates = bounds.getCenter();
                         }
@@ -703,10 +710,10 @@ export const fetchOrganisations = (map) => {
                     if(organisation.level == 2 && organisation.parent != undefined){
                         if(organisation.parent.displayName == 'Sierra Leone'){
                             SierraLeone.push(organisation);
-                        }
+                        }                      
                     }
                     else if(organisation.level == 3 && organisation.parent.parent != undefined){
-                        if(organisation.parent.parent.displayName == 'Sierra Leone' && organisation.parent.displayName != 'World'){
+                        if(organisation.parent.parent.displayName == 'Sierra Leone' && organisation.parent.displayName != 'World'){                           
                             SierraLeone.push(organisation);
                         }
                     }
@@ -715,7 +722,7 @@ export const fetchOrganisations = (map) => {
                             SierraLeone.push(organisation);
                         }
                     }
-                });
+                });           
                 dispatch(recievedOrganisations(SierraLeone));
                 dispatch(createAllMarkers(allFacilities, map));
                 dispatch(updateSearch(search));
