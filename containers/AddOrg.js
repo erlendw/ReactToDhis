@@ -28,6 +28,23 @@ class AddOrg extends React.Component {
         
     }
 
+    closeModal(){
+
+        this.setState({
+
+            name : '',
+            shortName : '',
+            displayName : '',
+            diasplayShortName : '',
+            longitude : '',
+            lattitude: ''
+        })
+
+        this.props.showAddOrgModal(false)
+
+
+    }
+
     handleSubmit(){
 
         this.props.addNewOganisationUnit(this.state.name, this.state.shortName, this.state.date);
@@ -82,7 +99,19 @@ class AddOrg extends React.Component {
                 break;
         }
     }
-    
+
+    componentDidUpdate(){
+
+        if(this.state.longitude == '' && this.state.lattitude == ''){
+            this.setState({
+                longitude : this.props.currentOrg.longitude,
+                lattitude: this.props.currentOrg.lattitude
+            })
+        }
+
+
+
+    }
 
     render(){
 
@@ -167,7 +196,7 @@ class AddOrg extends React.Component {
                             onClick={() => {this.handleSubmit()}}
                         >Submit</Button>
                         <Button
-                            onClick={() => {this.props.showAddOrgModal(false)}}
+                            onClick={() => {this.closeModal()}}
                         >Close</Button>
                     </Modal.Footer>
                 </Modal>
@@ -184,7 +213,8 @@ class AddOrg extends React.Component {
 
 const mapStateToProps = (state) => {
     return{
-        addOrg : state.addOrg
+        addOrg : state.addOrg,
+        currentOrg : state.currentOrg
     }
 
 };

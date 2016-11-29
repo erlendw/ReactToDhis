@@ -244,15 +244,11 @@ export const addDistrictBorderPolygon = (cords, item, map, dispatch) => {
                     var j = JSON.parse(child.coordinates);
                     var array = [];
                     for(var i = 0; i < j.length; i+=1){
-                        if(j[i].length != undefined){
-                            
+                        if(j[i].length != undefined){   
                             if(j[0][0].length < 7 && j.length == 1){
-                                console.log(child.displayName);
+                                //console.log(child.displayName);
                             }
                             else{
-                                //dispatch(createChildPolygon(j[i],map, child));
-
-
                                 var bounds = new google.maps.LatLngBounds();
                                 var temp = [];   
 
