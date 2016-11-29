@@ -9,7 +9,7 @@ import superagent from 'superagent'
 
 
 // https://play.dhis2.org/demo/api/organisationUnits.json?filter=id:eq:vWbkYPRmKyS&fields=id,displayName,level,coordinates,children&paging=false&level=3
-const serverUrl = dhisAPI + '/api/organisationUnits.json?fields=id,displayName,level,coordinates,parent[displayName,parent[displayName]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
+const serverUrl = dhisAPI + '/api/organisationUnits.json?fields=id,displayName,level,coordinates,parent[displayName,parent[displayName,parent[displayName]]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
 //const serverUrl = 'localhost:8080/api/organisationUnits.json?fields=id,displayName,level,coordinates,parent[displayName,parent[displayName]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
 
 //const serverUrl = 'https://play.dhis2.org/test/api/organisationUnits.json?fields=id,displayName,level,coordinates,parent[displayName,parent[displayName]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
@@ -252,6 +252,7 @@ export const addDistrictBorderPolygon = (cords, item, map, dispatch) => {
                 }
             }
         });
+
         dispatch(updateSearch(newSearch));
         
     });
@@ -517,14 +518,20 @@ export const fetchOrganisations = (map) => {
         return Axios.get(serverUrl, fetchOptions)
             .then(response => {
 
-                var search = []
-                    response.data.organisationUnits.forEach(function getSearch(org){
-                        if(org.level != undefined)
-                            if(org.level == 2)
-                                search.push(org);
-                    });
+                // We only want to display the districts in the result list first
+                var search = [];
+
+                // Find all districts in the Sierra Leone database
+                response.data.organisationUnits.forEach(function getSearch(org){
+                    if(org.level != undefined  && org.parent != undefined)
+                        if(org.level == 2 && org.parent.displayName == 'Sierra Leone')
+                            search.push(org);
+                });
 
                 var allFacilities = [];
+                var SierraLeone = [];
+
+                // Iterate all units in response
                 async.forEach(response.data.organisationUnits, function asyncforeach(organisation, callback) {
 
                     if(organisation.coordinates != undefined && organisation.displayName != "mmm"){
@@ -545,7 +552,12 @@ export const fetchOrganisations = (map) => {
                             organisation.coordinatesObject = array;
 
                             if(organisation.level == 4){
-                                allFacilities.push(organisation);
+                                if(organisation.parent.parent.parent != undefined){
+                                    if(organisation.parent.parent.parent.displayName == 'Sierra Leone'){
+                                        allFacilities.push(organisation);
+                                        //SierraLeone.push(organisation);
+                                    }
+                                }                              
                             }                      
                         }
                         else{
@@ -580,25 +592,48 @@ export const fetchOrganisations = (map) => {
                             if(organisation.level == 3){  
                                 array.forEach((section) =>{
                                     if(section.length > 6){
-                                        organisation.centerCoordinates = bounds.getCenter();
-                                        dispatch(addChiefdomBorderPolygon(section, organisation, map));
+                                        if(organisation.parent.parent != undefined){
+                                            if(organisation.parent.parent.displayName == 'Sierra Leone'){
+                                                organisation.centerCoordinates = bounds.getCenter();
+                                                dispatch(addChiefdomBorderPolygon(section, organisation, map));
+                                                //SierraLeone.push(organisation);
+                                            }
+                                        }                                       
                                     }
                                 });                                           
                             }
                             else if(organisation.level == 2){
                                 array.forEach(function eachDistrict(section){
-                                    dispatch(addDistrictBorderPolygon(section, organisation, map, dispatch));
+                                    if(organisation.parent != undefined){
+                                        if(organisation.parent.displayName == 'Sierra Leone'){
+                                            dispatch(addDistrictBorderPolygon(section, organisation, map, dispatch));
+                                        }
+                                    }
                                 });                               
                             }                           
                             organisation.coordinatesObject = array;
                             organisation.centerCoordinates = bounds.getCenter();
                         }
                     }
-                });
 
-
-
-                dispatch(recievedOrganisations(response.data.organisationUnits));
+                    // Keep the unit if its part of the Sierra Leone Database
+                    if(organisation.level == 2 && organisation.parent != undefined){
+                        if(organisation.parent.displayName == 'Sierra Leone'){
+                            SierraLeone.push(organisation);
+                        }                      
+                    }
+                    else if(organisation.level == 3 && organisation.parent.parent != undefined){
+                        if(organisation.parent.parent.displayName == 'Sierra Leone' && organisation.parent.displayName != 'World'){                           
+                            SierraLeone.push(organisation);
+                        }
+                    }
+                    else if(organisation.level == 4 && organisation.parent.parent.parent != undefined){
+                        if(organisation.parent.parent.parent.displayName == 'Sierra Leone'){
+                            SierraLeone.push(organisation);
+                        }
+                    }
+                });           
+                dispatch(recievedOrganisations(SierraLeone));
                 dispatch(createAllMarkers(allFacilities, map));
                 dispatch(updateSearch(search));
             })

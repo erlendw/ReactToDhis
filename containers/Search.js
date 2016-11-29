@@ -29,7 +29,7 @@ class Search extends React.Component {
     }
 
     componentDidMount(){
-        console.log(this);
+
         // Options for the Google Maps API
         var gooogleOptions ={
             key: "AIzaSyDtsokboJ-exluz1PyeU6YrsEAoQSRvaDo"
@@ -81,7 +81,7 @@ class Search extends React.Component {
         or a chiefdom and displays a facility as a 
         marker.
         */
-        
+
         // get the list element
         var element = document.getElementById(item.id);
 
@@ -158,6 +158,12 @@ class Search extends React.Component {
         // Show a Chiefdoms border and give it an info window
         else if(item.level == 3){
 
+            // Error Message if no coordinates
+            if(item.coordinatesObject == undefined){
+                window.alert("DHIS2 does not have coordinates for this unit");
+                return;
+            }
+
             // Remove existing polygons
             parent.showNoBorders(parent, map, singles);
 
@@ -208,6 +214,12 @@ class Search extends React.Component {
         // Show a Districts border
         else if(item.level == 2){
 
+            // Error Message if no coordinates
+            if(item.coordinatesObject == undefined){
+                window.alert("DHIS2 does not have coordinates for this unit");
+                return;
+            }
+
             // We don't want to remove existing single chiefdoms, user might want to see in which district said chiefdom is located.
             var newSingles = []
             singles.forEach(function(single){
@@ -231,7 +243,6 @@ class Search extends React.Component {
             });
 
             districtBorder.addListener('click', function(event) {
-                console.log(districtBorder);
                 districtBorder.setMap(null);
                 map.setZoom(9);
                 map.setCenter(item.centerCoordinates);
@@ -277,7 +288,6 @@ class Search extends React.Component {
                             <ControlLabel>Search:</ControlLabel><br/>
                             <select id="select" onChange={(e) => this.props.changeLevel(e,this.props.search,this.props.organisations)} defaultValue="2">
                                 <option value="" disabled>Filter levels--</option>
-                                <option value="5">All levels</option>
                                 <option value="2">District</option>
                                 <option value="3">Chiefdoms</option>
                                 <option value="4">Facilities</option>
