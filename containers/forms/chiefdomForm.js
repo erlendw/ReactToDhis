@@ -17,7 +17,7 @@ import { Modal, Col, Row,Button,Table,Navbar,Nav,NavItem,Form,ControlLabel, NavD
  Felter i district
 
  1: name
- 2: shortname
+ 2: shortName
  3: Displayneme
  4: DisplayShortname
 
@@ -31,9 +31,9 @@ class chiefdomForm extends React.Component {
         this.state = {
 
             name : '',
-            shortname : '',
-            displayname : '',
-            diasplayshortname : ''
+            shortName : '',
+            displayName : '',
+            diasplayShortName : ''
 
         };
     }
@@ -60,19 +60,19 @@ class chiefdomForm extends React.Component {
             case 'shortName':
                 console.log(e.target.value);
                 this.setState({
-                    shortname : e.target.value
+                    shortName : e.target.value
                 });
                 break;
             case 'displayName':
                 console.log(e.target.value);
                 this.setState({
-                    displayname : e.target.value
+                    displayName : e.target.value
                 });
                 break;
             case 'diasplayShortName':
                 console.log(e.target.value);
                 this.setState({
-                    diasplayshortname : e.target.value
+                    diasplayShortName : e.target.value
                 });
                 break;
         }
@@ -101,26 +101,26 @@ class chiefdomForm extends React.Component {
                         </FormGroup>
                         <FormGroup controlId="shortName">
                             <Col componentClass={ControlLabel} sm={4}>
-                                Short Name
+                                Short name
                             </Col>
                             <Col sm={6}>
-                                <FormControl value={this.state.shortname} onChange={(e) => {this.handleChange(e)}} placeholder={this.props.currentOrg.shortName}/>
+                                <FormControl value={this.state.shortName} onChange={(e) => {this.handleChange(e)}} placeholder={this.props.currentOrg.shortName}/>
                             </Col>
                         </FormGroup>
                         <FormGroup controlId="displayName" onSubmit={(e) => {this.handleSubmit(e)}}>
                             <Col componentClass={ControlLabel} sm={4}>
-                                Name
+                                Display name
                             </Col>
                             <Col sm={6}>
-                                <FormControl value={this.state.displayname} onChange={(e) => {this.handleChange(e)}} placeholder={this.props.currentOrg.displayName}/>
+                                <FormControl value={this.state.displayName} onChange={(e) => {this.handleChange(e)}} placeholder={this.props.currentOrg.displayName}/>
                             </Col>
                         </FormGroup>
                         <FormGroup controlId="diasplayShortName">
                             <Col componentClass={ControlLabel} sm={4}>
-                                Short Name
+                                Short display name
                             </Col>
                             <Col sm={6}>
-                                <FormControl value={this.state.diasplayshortname} onChange={(e) => {this.handleChange(e)}} placeholder={this.props.currentOrg.displayShortName} />
+                                <FormControl value={this.state.diasplayShortName} onChange={(e) => {this.handleChange(e)}} placeholder={this.props.currentOrg.displayShortName} />
                             </Col>
                         </FormGroup>
 
@@ -142,9 +142,7 @@ class chiefdomForm extends React.Component {
 
         )
     }
-
 };
-
 
 const mapStateToProps = (state) => {
     return{
