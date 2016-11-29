@@ -7,7 +7,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import ReactDOM from 'react-dom';
 import {bindActionCreators} from 'redux'
-import {showChangeOrgModal, addNewOganisationUnit} from '../../actions/actions'
+import {showChangeOrgModal, editOganisationUnit} from '../../actions/actions'
 import { Modal, Col, Row,Button,Table,Navbar,Nav,NavItem,Form,ControlLabel, NavDropdown, FormGroup,FormControl, NavbarBrand, MenuItem, DropdownButton, Well, Panel, ButtonGroup, hr} from 'react-bootstrap';
 
 
@@ -40,7 +40,9 @@ class districtForm extends React.Component {
 
     handleSubmit(){
 
-        this.props.addNewOganisationUnit(this.state.name, this.state.shortName, this.state.date)
+        console.log()
+
+        this.props.editOganisationUnit(this.state)
     }
 
 
@@ -58,7 +60,7 @@ class districtForm extends React.Component {
             case 'shortName':
                 console.log(e.target.value);
                 this.setState({
-                    shortName : e.target.value
+                    shortname : e.target.value
                 });
                 break;
             case 'displayName':
@@ -85,7 +87,7 @@ class districtForm extends React.Component {
                 {/*http://www.imdb.com/title/tt2356302/*/}
 
                 <Modal.Header>
-                    <Modal.Title>{this.props.currentOrg.name} : {this.props.currentOrg.id}</Modal.Title>
+                    <Modal.Title>{this.props.currentOrg.name} : district {this.props.currentOrg.id}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form horizontal onSubmit={(e) => {this.handleSubmit(e)}}>
@@ -102,7 +104,7 @@ class districtForm extends React.Component {
                                 Short Name
                             </Col>
                             <Col sm={6}>
-                                <FormControl value={this.state.shortName} onChange={(e) => {this.handleChange(e)}} placeholder={this.props.currentOrg.shortName}/>
+                                <FormControl value={this.state.shortname} onChange={(e) => {this.handleChange(e)}} placeholder={this.props.currentOrg.shortName}/>
                             </Col>
                         </FormGroup>
                         <FormGroup controlId="displayName" onSubmit={(e) => {this.handleSubmit(e)}}>
@@ -126,6 +128,15 @@ class districtForm extends React.Component {
 
                 </Modal.Body>
 
+                <Modal.Footer>
+                    <Button
+                        onClick={() => {this.handleSubmit()}}
+                    >Submit</Button>
+                    <Button
+                        onClick={() => {this.props.showChangeOrgModal(false)}}
+                    >Close</Button>
+                </Modal.Footer>
+
             </div>
             
             
@@ -147,7 +158,7 @@ const mapDispatchToProps = (dispatch) => {
     return {
 
         showChangeOrgModal : (b) => {dispatch(showChangeOrgModal(b))},
-        addNewOganisationUnit: (name, shortName, openingDate) => dispatch(addNewOganisationUnit(name, shortName, openingDate))
+        editOganisationUnit: (state) => dispatch(editOganisationUnit(state))
 
     }
 };

@@ -487,12 +487,14 @@ export const addNewOganisationUnit = (name, shortName, date) =>{
 };
 
 
-export const editOganisationUnit = (name, shortName, date, id) =>{
+export const editOganisationUnit = (state) =>{
+
+
+    console.log(state)
 
     return (dispatch) => {
-        var levelll = 4;
-
-        var datatosend = {"name":name, "shortName":shortName, "openingDate":date, "level":levelll, "displayName":name};
+/*
+        var datatosend = {"name":name, "shortName":shortName, "openingDate":date, "displayName":name};
 
         superagent.put(dhisAPI + '/api/organisationUnits/' + id)
             .send(datatosend)
@@ -501,7 +503,10 @@ export const editOganisationUnit = (name, shortName, date, id) =>{
             .end(function(err, response){
                 console.log(response);
 
-            });
+            });*/
+
+
+
 
 
     }

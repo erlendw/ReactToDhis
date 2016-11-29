@@ -91,14 +91,7 @@ class AddOrg extends React.Component {
                 <Modal show={this.props.changeOrg} >
                     
                     {modalToShow}
-                    <Modal.Footer>
-                        <Button
-                            onClick={() => {this.handleSubmit()}}
-                        >Submit</Button>
-                        <Button
-                            onClick={() => {this.props.showChangeOrgModal(false)}}
-                        >Close</Button>
-                    </Modal.Footer>
+
                 </Modal>
 
 
