@@ -17,7 +17,10 @@ class AddOrg extends React.Component {
 
             name : '',
             shortName : '',
-            date : ''
+            displayName : '',
+            diasplayShortName : '',
+            longitude : '',
+            lattitude: ''
 
         };
 
@@ -53,6 +56,30 @@ class AddOrg extends React.Component {
                     shortName : e.target.value
                 });
                 break;
+            case 'displayName':
+                console.log(e.target.value);
+                this.setState({
+                    displayName : e.target.value
+                });
+                break;
+            case 'diasplayShortName':
+                console.log(e.target.value);
+                this.setState({
+                    diasplayShortName : e.target.value
+                });
+                break;
+            case 'longitude':
+                console.log(e.target.value);
+                this.setState({
+                    longitude : e.target.value
+                });
+                break;
+            case 'lattitude':
+                console.log(e.target.value);
+                this.setState({
+                    lattitude : e.target.value
+                });
+                break;
         }
     }
     
@@ -66,32 +93,73 @@ class AddOrg extends React.Component {
                         <Modal.Title>Add new Organisation Unit</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                    <Form horizontal onSubmit={(e) => {this.handleSubmit(e)}}>
-                        <FormGroup controlId="name" onSubmit={(e) => {this.handleSubmit(e)}}>
-                            <Col componentClass={ControlLabel} sm={4}>
-                                Name
-                            </Col>
-                            <Col sm={6}>
-                                <FormControl value={this.state.name} onChange={(e) => {this.handleChange(e)}} placeholder="Name"/>
-                            </Col>
-                        </FormGroup>
-                        <FormGroup controlId="shortName">
-                            <Col componentClass={ControlLabel} sm={4}>
-                                Short Name
-                            </Col>
-                            <Col sm={6}>
-                                <FormControl value={this.state.shortName} onChange={(e) => {this.handleChange(e)}} placeholder="Short Name" />
-                            </Col>
-                        </FormGroup>
-                        <FormGroup controlId="date">
-                            <Col componentClass={ControlLabel} sm={4}>
-                                Opening Date
-                            </Col>
-                            <Col sm={6}>
-                                <input type="date" value={this.state.openingDate} onChange={this.setOpeningDate} />
-                            </Col>
-                        </FormGroup>
-                     </Form>
+                            <Form horizontal onSubmit={(e) => {this.handleSubmit(e)}}>
+                                <FormGroup controlId="name" onSubmit={(e) => {this.handleSubmit(e)}}>
+                                    <Col componentClass={ControlLabel} sm={4}>
+                                        Name
+                                    </Col>
+                                    <Col sm={6}>
+                                        <FormControl value={this.state.name} onChange={(e) => {this.handleChange(e)}} placeholder="Input name"/>
+                                    </Col>
+                                </FormGroup>
+                                <FormGroup controlId="shortName">
+                                    <Col componentClass={ControlLabel} sm={4}>
+                                        Short name
+                                    </Col>
+                                    <Col sm={6}>
+                                        <FormControl value={this.state.shortName} onChange={(e) => {this.handleChange(e)}} placeholder="Input short name"/>
+                                    </Col>
+                                </FormGroup>
+                                <FormGroup controlId="displayName" onSubmit={(e) => {this.handleSubmit(e)}}>
+                                    <Col componentClass={ControlLabel} sm={4}>
+                                        Display name
+                                    </Col>
+                                    <Col sm={6}>
+                                        <FormControl value={this.state.displayName} onChange={(e) => {this.handleChange(e)}} placeholder="Input display name"/>
+                                    </Col>
+                                </FormGroup>
+                                <FormGroup controlId="diasplayShortName">
+                                    <Col componentClass={ControlLabel} sm={4}>
+                                        Short display name
+                                    </Col>
+                                    <Col sm={6}>
+                                        <FormControl value={this.state.diasplayShortName} onChange={(e) => {this.handleChange(e)}} placeholder="Input short display name" />
+                                    </Col>
+                                </FormGroup>
+
+                                <FormGroup controlId="longitude">
+                                    <Col componentClass={ControlLabel} sm={4}>
+                                        Longitude
+                                    </Col>
+                                    <Col sm={6}>
+                                        <FormControl type="number" value={this.state.longitude} onChange={(e) => {this.handleChange(e)}} placeholder="pleace enter lattitude"/>
+                                    </Col>
+                                </FormGroup>
+
+
+                                <FormGroup controlId="lattitude">
+                                    <Col componentClass={ControlLabel} sm={4}>
+                                        Lattitude
+                                    </Col>
+                                    <Col sm={6}>
+                                        <FormControl type="number" value={this.state.lattitude} onChange={(e) => {this.handleChange(e)}} placeholder="pleace enter longitude" />
+                                    </Col>
+                                </FormGroup>
+
+
+                                <FormGroup controlId="date">
+                                    <Col componentClass={ControlLabel} sm={4}>
+                                        Opening Date
+                                    </Col>
+                                    <Col sm={6}>
+                                        <input type="date" value={this.state.openingDate} onChange={this.setOpeningDate} />
+                                    </Col>
+                                </FormGroup>
+
+
+
+
+                            </Form>
 
                     </Modal.Body>
                     <Modal.Footer>
@@ -103,8 +171,6 @@ class AddOrg extends React.Component {
                         >Close</Button>
                     </Modal.Footer>
                 </Modal>
-
-
 
             </div>
 
