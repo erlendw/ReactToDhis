@@ -94,6 +94,25 @@ class facilityForm extends React.Component {
 
     render(){
 
+        var currentOrg = this.props.currentOrg;
+
+
+
+        if(currentOrg.coordinatesObject != undefined){
+            console.log(currentOrg.coordinatesObject[0])
+            var lat = currentOrg.coordinatesObject[0].lat;
+            var lng = currentOrg.coordinatesObject[0].lng;
+
+
+        }
+
+        else{
+
+            var lat = "please input lattitude";
+            var lng = "please input longitude"
+
+        }
+
         return(
 
             <div>
@@ -143,7 +162,7 @@ class facilityForm extends React.Component {
                                 Longitude
                             </Col>
                             <Col sm={6}>
-                                <FormControl type="number" value={this.state.longitude} onChange={(e) => {this.handleChange(e)}} placeholder="pleace enter lattitude"/>
+                                <FormControl type="number" value={this.state.longitude} onChange={(e) => {this.handleChange(e)}} placeholder={lat}/>
                             </Col>
                         </FormGroup>
 
@@ -153,7 +172,7 @@ class facilityForm extends React.Component {
                                 Lattitude
                             </Col>
                             <Col sm={6}>
-                                <FormControl type="number" value={this.state.lattitude} onChange={(e) => {this.handleChange(e)}} placeholder="pleace enter longitude" />
+                                <FormControl type="number" value={this.state.lattitude} onChange={(e) => {this.handleChange(e)}} placeholder={lng} />
                             </Col>
                         </FormGroup>
 
