@@ -3,6 +3,9 @@ import { connect } from 'react-redux';
 import { Button,Table,Navbar,Nav,NavItem,Form,ControlLabel, NavDropdown, FormGroup,FormControl, NavbarBrand, MenuItem, Accordion, Panel} from 'react-bootstrap';
 import * as actions from '../actions/actions';
 
+/*
+Creates the result list
+*/
 export function List({ organisations = [], onItemClick, props, map, singles, showchangeModalYo}) {
        
     const listItems = organisations

@@ -3,6 +3,9 @@ import {connect} from 'react-redux';
 import {showAddOrgModal, addNewOganisationUnit, showHelpModal} from '../actions/actions'
 import {Modal,OverlayTrigger, Button, ControlLabel, FormControl, FormGroup, Col, Form, h4} from 'react-bootstrap'
 
+/*
+Component for the help modal
+*/
 class AddOrg extends React.Component {
 
     constructor(){

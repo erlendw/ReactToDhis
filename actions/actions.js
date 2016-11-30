@@ -4,9 +4,9 @@ import async from 'async'
 import superagent from 'superagent'
 
 // Url for DHIS api. Variable "dhisAPI is defined in index.html"
-//const serverUrl = dhisAPI + '/api/organisationUnits.json?fields=id,displayName,level,coordinates,parent[displayName,parent[displayName,parent[displayName]]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
+const serverUrl = dhisAPI + '/api/organisationUnits.json?fields=id,displayName,level,coordinates,parent[displayName,parent[displayName,parent[displayName]]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
 
-const serverUrl = 'https://play.dhis2.org/test/api/organisationUnits.json?fields=id,displayName,name,shortName,displayShortName,level,coordinates,parent[displayName,parent[displayName]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
+//const serverUrl = 'https://play.dhis2.org/test/api/organisationUnits.json?fields=id,displayName,name,shortName,displayShortName,level,coordinates,parent[displayName,parent[displayName]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
 
 // Authentication for DHIS2
 const basicAuth = `Basic ${btoa('admin:district')}`;
@@ -728,6 +728,7 @@ export const fetchOrganisations = (map) => {
                                     if(organisation.parent.parent.parent.displayName == 'Sierra Leone'){
                                         // Add as a facility
                                         allFacilities.push(organisation);
+
                                     }
                                 }                              
                             }                      

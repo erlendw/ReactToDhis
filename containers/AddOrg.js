@@ -1,14 +1,11 @@
-/**
- * Created by erlend on 16.11.2016.
- */
 import React from 'react';
 import {connect} from 'react-redux';
-
 import {showAddOrgModal, addNewOganisationUnit} from '../actions/actions'
-
-
 import {Modal,OverlayTrigger, Button, ControlLabel, FormControl, FormGroup, Col, Form} from 'react-bootstrap'
 
+/*
+Component for the "add new unit" modal
+*/
 class AddOrg extends React.Component {
 
     constructor(){

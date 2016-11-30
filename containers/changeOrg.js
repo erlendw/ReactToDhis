@@ -1,22 +1,15 @@
-/**
- * Created by erlend on 27.11.2016.
- */
-/**
- * Created by erlend on 16.11.2016.
- */
 import React from 'react';
 import {connect} from 'react-redux';
-
 import {showChangeOrgModal, addNewOganisationUnit} from '../actions/actions'
-
-
 import {Modal, Button} from 'react-bootstrap'
-
 import DistrictForm from './forms/districtForm'
 import ContryForm from './forms/contryForm'
 import FacilityForm from './forms/facilityForm'
 import ChiefdomForm from './forms/chiefdomForm'
 
+/*
+Component for the "edit unit" modal
+*/
 class AddOrg extends React.Component {
     constructor(){
         super();
