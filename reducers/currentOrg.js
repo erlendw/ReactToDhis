@@ -1,13 +1,3 @@
-/**
- * Created by erlend on 28.11.2016.
- */
-
-
-/**
- * Created by erlend on 16.11.2016.
- */
-
-
 
 export default (state = [], action) => {
 
