@@ -4,7 +4,7 @@ import async from 'async'
 import superagent from 'superagent'
 
 // Url for DHIS api. Variable "dhisAPI is defined in index.html"
-const serverUrl = dhisAPI + '/api/organisationUnits.json?fields=id,displayName,level,coordinates,parent[displayName,parent[displayName,parent[displayName]]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
+const serverUrl = dhisAPI + '/api/organisationUnits.json?fields=id,displayName,name,shortName,displayShortName,level,coordinates,parent[displayName,parent[displayName]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
 
 //const serverUrl = 'https://play.dhis2.org/test/api/organisationUnits.json?fields=id,displayName,name,shortName,displayShortName,level,coordinates,parent[displayName,parent[displayName]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
 
@@ -642,8 +642,6 @@ export const addNewOganisationUnit = (state) =>{
                 if(response.status == 201){
                     dispatch(addOrganisation(data));
                 }
-
-
             });
 
     }
@@ -656,11 +654,17 @@ Edits a unit in DHIS2
 export const editOganisationUnit = (state) =>{
 
 
-    console.log(state)
+    console.log(state);
+
+    var cords = {"lng":state.longitude, "lat": state.lattitude};
+    if(state.longitude != undefined && state.lattitude){
+        var cordsString = "[ "+state.longitude+", "+state.lattitude+" ]";
+    }
+
 
     return (dispatch) => {
-/*
-        var datatosend = {"name":name, "shortName":shortName, "openingDate":date, "displayName":name};
+
+        var datatosend = {"name":state.name, "shortName":state.shortName, "openingDate":state.date, "displayName":state.name, "coordinates":cordsString};
 
         superagent.put(dhisAPI + '/api/organisationUnits/' + id)
             .send(datatosend)
@@ -669,11 +673,7 @@ export const editOganisationUnit = (state) =>{
             .end(function(err, response){
                 console.log(response);
 
-            });*/
-
-
-
-
+            });
 
     }
 
