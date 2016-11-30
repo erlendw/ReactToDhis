@@ -8,6 +8,8 @@ const serverUrl = dhisAPI + '/api/organisationUnits.json?fields=id,displayName,l
 
 //const serverUrl = 'https://play.dhis2.org/test/api/organisationUnits.json?fields=id,displayName,name,shortName,displayShortName,level,coordinates,parent[displayName,parent[displayName]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
 
+var chiefdom = '';
+var district = '';
 // Authentication for DHIS2
 const basicAuth = `Basic ${btoa('admin:district')}`;
 
@@ -625,7 +627,17 @@ export const addNewOganisationUnit = (state) =>{
     var cords = {"lng":state.longitude, "lat": state.lattitude};
     var cordsString = "[ "+state.longitude+", "+state.lattitude+" ]";
 
-    var data = {"name":state.name, "shortName":state.shortName, "displayName":state.displayName, "displayShortName":state.displayShortName, "coordinates":cordsString, "openingDate":state.date, "level":level, "displayName":state.displayName};
+    var data = {
+        "name":state.name, 
+        "shortName":state.shortName,
+        "displayName":state.displayName, 
+        "displayShortName":state.displayShortName, 
+        "coordinates":cordsString, 
+        "openingDate":state.date, 
+        "level":4, 
+        "displayName":state.displayName
+        "parent":{"id":Chiefdom, "displayName":"Badjia", "parent":{"id":District, "displayName":"Bo"}}
+    };
 
     console.log(data)
 
@@ -799,11 +811,13 @@ export const fetchOrganisations = (map) => {
                     if(organisation.level == 2 && organisation.parent != undefined){
                         if(organisation.parent.displayName == 'Sierra Leone'){
                             SierraLeone.push(organisation);
+                            District = organisation.id;
                         }                      
                     }
                     else if(organisation.level == 3 && organisation.parent.parent != undefined){
                         if(organisation.parent.parent.displayName == 'Sierra Leone' && organisation.parent.displayName != 'World'){                           
                             SierraLeone.push(organisation);
+                            Chiefdom = organisation.id;
                         }
                     }
                     else if(organisation.level == 4 && organisation.parent.parent.parent != undefined){
