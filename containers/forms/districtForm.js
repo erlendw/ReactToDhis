@@ -40,9 +40,10 @@ class districtForm extends React.Component {
 
     handleSubmit(){
 
-        console.log()
+        console.log(this.state)
 
-        this.props.editOganisationUnit(this.state)
+        this.props.editOganisationUnit(this.state);
+        this.props.showChangeOrgModal(false);
     }
 
 
@@ -72,7 +73,7 @@ class districtForm extends React.Component {
             case 'displayShortName':
                 console.log(e.target.value);
                 this.setState({
-                    diasplayShortName : e.target.value
+                    displayShortName : e.target.value
                 });
                 break;
         }
@@ -115,7 +116,7 @@ class districtForm extends React.Component {
                                 <FormControl value={this.state.displayName} onChange={(e) => {this.handleChange(e)}} placeholder={this.props.currentOrg.displayName}/>
                             </Col>
                         </FormGroup>
-                        <FormGroup controlId="diasplayShortName">
+                        <FormGroup controlId="displayShortName">
                             <Col componentClass={ControlLabel} sm={4}>
                                 Short display name
                             </Col>
@@ -138,12 +139,9 @@ class districtForm extends React.Component {
                 </Modal.Footer>
 
             </div>
-            
-            
         )
     }
-    
-};
+}
 
 
 const mapStateToProps = (state) => {
