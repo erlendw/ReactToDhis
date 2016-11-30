@@ -1,27 +1,17 @@
-/**
- * Created by erlend on 09.11.2016.
- */
-
 import btoa from 'btoa'
 import Axios from 'axios'
 import async from 'async'
 import superagent from 'superagent'
 
-
-// https://play.dhis2.org/demo/api/organisationUnits.json?filter=id:eq:vWbkYPRmKyS&fields=id,displayName,level,coordinates,children&paging=false&level=3
-
+// Url for DHIS api. Variable "dhisAPI is defined in index.html"
 //const serverUrl = dhisAPI + '/api/organisationUnits.json?fields=id,displayName,level,coordinates,parent[displayName,parent[displayName,parent[displayName]]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
-//const serverUrl = dhisAPI + '/api/organisationUnits.json?fields=id,displayName,level,coordinates,parent[displayName,parent[displayName]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
-
-//const serverUrl = 'localhost:8080/api/organisationUnits.json?fields=id,displayName,level,coordinates,parent[displayName,parent[displayName]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
 
 const serverUrl = 'https://play.dhis2.org/test/api/organisationUnits.json?fields=id,displayName,name,shortName,displayShortName,level,coordinates,parent[displayName,parent[displayName]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
 
-//const shortServerUrl = 'https://play.dhis2.org/test/api/organisationUnits';
-//const serverUrl = 'https://play.dhis2.org/test/api/organisationUnits.json?filter=id:eq:vWbkYPRmKyS&fields=coordinates,displayName';
-
+// Authentication for DHIS2
 const basicAuth = `Basic ${btoa('admin:district')}`;
 
+// Options for requests to DHIS2 api
 const fetchOptions = {
     method: 'GET',
     headers: {
@@ -30,7 +20,9 @@ const fetchOptions = {
     }
 };
 
-
+/*
+Adding a bulk of units to props
+*/
 export const recievedOrganisations = (data) => {  
     return{
         type: "ORGANISATIONS_RECIEVED",
@@ -38,6 +30,9 @@ export const recievedOrganisations = (data) => {
     }
 };
 
+/*
+Adding one unit to props
+*/
 export const addOrganisation = (data) => {  
     return{
         type: "ADD_ORGANISATION",
@@ -45,15 +40,19 @@ export const addOrganisation = (data) => {
     }
 };
 
-
+/*
+Adds a unit to props for editing
+*/
 export const updateCurrentOrg = (org) => {
-    //owChangeOrgModal(true);
     return {
         type: 'CURRENTORG_UPDATED',
         payload : org
     }
 };
 
+/*
+Set the search array in props
+*/
 export const updateSearch = (data) => {
     return{
         type: "UPDATE_SEARCH",
@@ -61,6 +60,9 @@ export const updateSearch = (data) => {
     }
 };
 
+/*
+Add Chiefdom border arrays to props
+*/
 export const getChiefdomBorderSuccess = (cords) => {
     return {
         type: 'GET_CHIEFDOM_BORDER_SUCCESS',
@@ -68,6 +70,9 @@ export const getChiefdomBorderSuccess = (cords) => {
     }
 };
 
+/*
+Add District border arrays to props
+*/
 export const getDistrictBorderSuccess = (cords) => {
     return {
         type: 'GET_DISTRICT_BORDER_SUCCESS',
@@ -75,27 +80,39 @@ export const getDistrictBorderSuccess = (cords) => {
     }
 };
 
-export const showHelpModal = (b) => { //b === boolean
+/*
+Show the help modal
+*/
+export const showHelpModal = (b) => { 
     return {
         type: 'SHOW_HELP_MODAL',
         payload : b
     }
 };
 
-export const showAddOrgModal = (b) => { //b === boolean
+/*
+Show the "add new unit" modal
+*/
+export const showAddOrgModal = (b) => { 
     return {
         type: 'ADDORG_UPDATED',
         payload : b
     }
 };
 
-export const showChangeOrgModal = (b) => { //b === boolean
+/*
+Show the "change a unit" modal
+*/
+export const showChangeOrgModal = (b) => { 
     return {
         type: 'CHANGEORG_UPDATED',
         payload : b
     }
 };
 
+/*
+Add a bulk of Chiefdom polygons to props
+*/
 export const updateChiefdomBorderPolygons = (polys) => {
     return{
         type: 'UPDATE_CHIEFDOM_BORDER_POLYGON',
@@ -103,6 +120,9 @@ export const updateChiefdomBorderPolygons = (polys) => {
     }
 };
 
+/*
+Add a bulk of District polygons to props
+*/
 export const updateDistrictBorderPolygons = (polys) => {
     return{
         type: 'UPDATE_CHIEFDOM_BORDER_POLYGON',
@@ -110,6 +130,9 @@ export const updateDistrictBorderPolygons = (polys) => {
     }
 };
 
+/*
+Add a bulk of Chiefdom polygons to props
+*/
 export const showAllChildPolygons = (polys) => {
     return{
         type: 'SHOW_ALL_CHILD_POLYGONS',
@@ -117,6 +140,9 @@ export const showAllChildPolygons = (polys) => {
     }
 };
 
+/*
+Creates markers on the map for all the facilities that have coordinates
+*/
 export const createAllMarkers = (allFacilities, map) =>{
 
     var allMarkers = [];
@@ -163,7 +189,6 @@ export const createAllMarkers = (allFacilities, map) =>{
         allMarkers.push(marker);
     });
     
-
     return {
         type: 'SET_ALL_MARKERS',
         allMarkers
@@ -171,12 +196,11 @@ export const createAllMarkers = (allFacilities, map) =>{
 
 };
 
+/*
+Creates a marker for a facility, adds a 
+info window to it and sends it to the store
+*/
 export const getLocationSuccess = (coordinates, map, item) => {
-
-    /*
-    This function creates a marker for a facility, adds a 
-    info window to it and sends it to the store
-    */
 
     // Taking into account that some organisational units 
     // have invalid parent data
@@ -223,10 +247,14 @@ export const getLocationSuccess = (coordinates, map, item) => {
     }
 };
 
-
-
-
+/*
+Creates a polygon on the map for a district. 
+Also adds polygons and info windows for all 
+chiefdoms in the district.
+*/
 export const addDistrictBorderPolygon = (cords, item, map, dispatch) => {
+
+    // Create the polygon
     var districtBorder = new google.maps.Polygon({
         paths: cords,
         strokeColor: '#FF0000',
@@ -236,22 +264,46 @@ export const addDistrictBorderPolygon = (cords, item, map, dispatch) => {
         fillOpacity: 0.25
     });
 
+    /*
+    When clicked the polygon should be removed and polygons
+    for all the chiefdoms should replace it. The map should
+    also zoom in to the clicked district.
+
+    When the polygon is clicked the results list will show 
+    chiefdoms in district
+    */
     districtBorder.addListener('click', function(event) {
-        
+
+        // Remove district polygon
         districtBorder.fillOpacity = 0;
         districtBorder.setMap(null);
+
+        // Zoom in to the district
         map.setZoom(9);
         map.setCenter(item.centerCoordinates);
 
         var newSearch = [];
         var allChildPolygons = [];
+
+        // Create polygon and infowindow for each chiefdom in the district
         item.children.forEach(function eachChild(child){
+
+            // Check for invalid data
             if(child != undefined ){
                 if(child.coordinates != undefined){
                     
                     var j = JSON.parse(child.coordinates);
                     var array = [];
+
+                    /*
+                    Iterate the chiefdoms coordinates. A chiefdom might
+                    contain several polygons. If the chiefdom contains
+                    islands, coordinates for those will be will be grouped
+                    in several arrays.
+                    */
                     for(var i = 0; i < j.length; i+=1){
+
+                        // Check for invalid data
                         if(j[i].length != undefined){   
                             if(j[0][0].length < 7 && j.length == 1){
                                 //console.log(child.displayName);
@@ -259,6 +311,7 @@ export const addDistrictBorderPolygon = (cords, item, map, dispatch) => {
                             else{
                                 var bounds = new google.maps.LatLngBounds();
                                 var temp = [];   
+
 
                                 j[i].forEach((c) => {
                                     c.forEach((subC)=>{
@@ -271,6 +324,7 @@ export const addDistrictBorderPolygon = (cords, item, map, dispatch) => {
                                         temp.push(ut); 
                                     });
 
+                                    // Content for info window
                                     var info =  '<div id="content">'+
                                                     '<div id="siteNotice">'+
                                                     '</div>'+
@@ -285,7 +339,7 @@ export const addDistrictBorderPolygon = (cords, item, map, dispatch) => {
 
                                     info += '</p>'+'</div>'+'</div>';
                                                               
-
+                                    // Create the chiefdom
                                     var chiefdomBorder = new google.maps.Polygon({
                                         paths: temp,
                                         strokeColor: '#008822',
@@ -297,35 +351,41 @@ export const addDistrictBorderPolygon = (cords, item, map, dispatch) => {
                                         type: "chiefdomAddOn"
                                     });
 
+                                    // Create the info window
                                     var infowindow = new google.maps.InfoWindow({
                                         content: info,
                                         position: bounds.getCenter()
                                     });
 
+                                    /* Add a click listener to the chiefdom polygon. 
+                                    When clicked, the info window should show*/
                                     chiefdomBorder.addListener('click', function(event) {
                                         map.setZoom(10);
                                         map.setCenter(bounds.getCenter());
                                         infowindow.open(map);
                                     });
                                     array.push(temp);
-                                    allChildPolygons.push(chiefdomBorder);
-                                                              
+                                    allChildPolygons.push(chiefdomBorder);                                                              
                                 });
                             }
                         }
                     }
-                                 
+                    
+                    // Check for invalid data     
                     if(child.parent == undefined)
                         child.parent = {displayName: "no parent", parent: {displayName: "no parent"}}
+
+                    // Chiefdoms in the district will be added to the results list
                     child.coordinatesObject = array;
                     newSearch.push(child);
                 }
             }
         });
+        // Add all polygons to props
         dispatch(showAllChildPolygons(allChildPolygons));
 
-        dispatch(updateSearch(newSearch));
-        
+        // Update the results list to show the chiefdoms in the district
+        dispatch(updateSearch(newSearch));  
     });
     return {
         type: 'ADD_DISTRICT_BORDER_POLYGON',
@@ -333,9 +393,10 @@ export const addDistrictBorderPolygon = (cords, item, map, dispatch) => {
     }
 };
 
-
+/*
+Creates a Chiefdom polygon
+*/
 export const createChildPolygon = (childCords, map, child) =>{
-
 
     var bounds = new google.maps.LatLngBounds();
     var temp = [];   
@@ -349,10 +410,10 @@ export const createChildPolygon = (childCords, map, child) =>{
             } 
             bounds.extend(ut);
             temp.push(ut); 
-        });
-                                      
+        });                           
     });
 
+    // Content for info window
     var info =  '<div id="content">'+
                     '<div id="siteNotice">'+
                     '</div>'+
@@ -367,7 +428,7 @@ export const createChildPolygon = (childCords, map, child) =>{
 
     info += '</p>'+'</div>'+'</div>';
                               
-
+    // Create the polygon
     var chiefdomBorder = new google.maps.Polygon({
         paths: temp,
         strokeColor: '#008822',
@@ -379,11 +440,13 @@ export const createChildPolygon = (childCords, map, child) =>{
         type: "chiefdomAddOn"
     });
 
+    // Create the info window
     var infowindow = new google.maps.InfoWindow({
         content: info,
         position: bounds.getCenter()
     });
 
+    // Add a click listener to the polygon. When clicked, the info window should show
     chiefdomBorder.addListener('click', function(event) {
         map.setZoom(10);
         map.setCenter(bounds.getCenter());
@@ -395,8 +458,12 @@ export const createChildPolygon = (childCords, map, child) =>{
     }
 };
 
+/*
+Creates a chiefdom polygon and info window for the map
+*/
 export const addChiefdomBorderPolygon = (cords, item, map) => {
 
+    // Content for the info window
     var info =  '<div id="content">'+
                     '<div id="siteNotice">'+
                     '</div>'+
@@ -411,6 +478,7 @@ export const addChiefdomBorderPolygon = (cords, item, map) => {
 
     info += '</p>'+'</div>'+'</div>';
 
+    // Create the polygon
     var chiefdomBorder = new google.maps.Polygon({
         paths: cords,
         strokeColor: '#008822',
@@ -420,11 +488,13 @@ export const addChiefdomBorderPolygon = (cords, item, map) => {
         fillOpacity: 0.20
     });
 
+    // Create the info window
     var infowindow = new google.maps.InfoWindow({
         content: info,
         position: item.centerCoordinates
     });
 
+    // Add a click listener to the polygon. When clicked, the info window should show
     chiefdomBorder.addListener('click', function(event) {
         map.setZoom(10);
         map.setCenter(item.centerCoordinates);
@@ -437,27 +507,27 @@ export const addChiefdomBorderPolygon = (cords, item, map) => {
     }
 };
 
-
-
-
-
-//ADDORG_UPDATED
-
-
+/*
+Function that finds search results for the live search
+and updates the results list.
+*/
 export const findMatchingElements = (data, search) => {
     return(dispatch) => {
         
-        var satan = [];
+        var results = [];
         data.forEach( (elem) =>
         {
             if(elem.displayName.toLowerCase().indexOf(search.target.value.toLowerCase()) !== -1 ){
-                satan.push(elem)
+                results.push(elem)
             }
         });
-        dispatch(updateSearch(satan))        
+        dispatch(updateSearch(results))        
     }
 };
 
+/*
+Functions that filters the results list on levels
+*/
 export const changeLevel = (e , data, all) => {
     return(dispatch) => {
         var satan = [];
@@ -475,14 +545,15 @@ export const changeLevel = (e , data, all) => {
     }   
 };
 
-
+/*
+Shows all the districts border polygons
+*/
 export const showDistrictBorder = (props, map, singles) => {
     return(dispatch) => {
         singles.forEach(function(poly){
             if(poly.type == "district"){
                 poly.setMap(null);
             }
-
         });
         props.districtBorderPolygons.forEach(function(dbp){
             dbp.setMap(map);                
@@ -497,6 +568,9 @@ export const showDistrictBorder = (props, map, singles) => {
     }   
 };
 
+/*
+Shows all the chiefdoms border polygons
+*/
 export const showChiefdomBorder = (props, map, singles) => {
 
     return(dispatch) => {
@@ -516,6 +590,9 @@ export const showChiefdomBorder = (props, map, singles) => {
     }   
 };
 
+/*
+Removes all border polygons
+*/
 export const showNoBorder = (props, map, singles) => {
 
     return(dispatch) => {
@@ -537,9 +614,10 @@ export const showNoBorder = (props, map, singles) => {
 };
 
 
-
+/*
+Adds a new unit to DHIS2
+*/
 export const addNewOganisationUnit = (state) =>{
-
 
     console.log(state)
 
@@ -572,7 +650,9 @@ export const addNewOganisationUnit = (state) =>{
 
 };
 
-
+/*
+Edits a unit in DHIS2
+*/
 export const editOganisationUnit = (state) =>{
 
 
@@ -599,12 +679,11 @@ export const editOganisationUnit = (state) =>{
 
 };
 
+/*
+Gets all organisations from DHIS2 and stores them in props
+*/
 export const fetchOrganisations = (map) => {
-   
     return (dispatch) => {
-
-  
-
         return Axios.get(serverUrl, fetchOptions)
             .then(response => {
 
@@ -624,13 +703,14 @@ export const fetchOrganisations = (map) => {
                 // Iterate all units in response
                 async.forEach(response.data.organisationUnits, function asyncforeach(organisation, callback) {
 
+                    // Check for invalid data
                     if(organisation.coordinates != undefined && organisation.displayName != "mmm"){
                       
                         var j = JSON.parse(organisation.coordinates);
                         var array = [];
                         var bounds = new google.maps.LatLngBounds();
 
-                  
+                        // If the units coordinates is a point
                         if(j[0][0] == undefined){
                          
                             var ut = {                                                        
@@ -639,13 +719,15 @@ export const fetchOrganisations = (map) => {
                             } 
 
                             array.push(ut);
+
+                            // Create an additional field in the unit for use in the map
                             organisation.coordinatesObject = array;
 
                             if(organisation.level == 4){
                                 if(organisation.parent.parent.parent != undefined){
                                     if(organisation.parent.parent.parent.displayName == 'Sierra Leone'){
+                                        // Add as a facility
                                         allFacilities.push(organisation);
-                                        //SierraLeone.push(organisation);
                                     }
                                 }                              
                             }                      
@@ -653,6 +735,8 @@ export const fetchOrganisations = (map) => {
                         else{
                             
                             var ut={};
+
+                            // For special cases
                             if(typeof j[0] == "string" && j.length == 2){    
                                                    
                                 ut = {
@@ -662,6 +746,7 @@ export const fetchOrganisations = (map) => {
                                 array.push(ut);  
                                                           
                             }
+                            // Units coordinates are a group of coordinates
                             else{                                             
                                 for(var i = 0; i < j.length; i+=1){
                                     var temp = [];
@@ -679,6 +764,8 @@ export const fetchOrganisations = (map) => {
                                     array.push(temp);
                                 }                               
                             }
+
+                            // If Chiefdom, create all border coordinates
                             if(organisation.level == 3){  
                                 array.forEach((section) =>{
                                     if(section.length > 6){
@@ -686,12 +773,12 @@ export const fetchOrganisations = (map) => {
                                             if(organisation.parent.parent.displayName == 'Sierra Leone'){
                                                 organisation.centerCoordinates = bounds.getCenter();
                                                 dispatch(addChiefdomBorderPolygon(section, organisation, map));
-                                                //SierraLeone.push(organisation);
                                             }
                                         }                                       
                                     }
                                 });                                           
                             }
+                            // If District, create all border coordinates
                             else if(organisation.level == 2){
                                 array.forEach(function eachDistrict(section){
                                     if(organisation.parent != undefined){
@@ -700,7 +787,8 @@ export const fetchOrganisations = (map) => {
                                         }
                                     }
                                 });                               
-                            }                           
+                            }
+                            // Add additional fields to unit.                           
                             organisation.coordinatesObject = array;
                             organisation.centerCoordinates = bounds.getCenter();
                         }
@@ -722,9 +810,15 @@ export const fetchOrganisations = (map) => {
                             SierraLeone.push(organisation);
                         }
                     }
-                });           
+                });
+
+                // Store all Units to props           
                 dispatch(recievedOrganisations(SierraLeone));
+
+                // Create all the markers for the map
                 dispatch(createAllMarkers(allFacilities, map));
+
+                // Set the array for the results list
                 dispatch(updateSearch(search));
             })
             .catch(error => {

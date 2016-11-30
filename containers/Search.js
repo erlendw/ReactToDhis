@@ -1,6 +1,3 @@
-/**
- * Created by erlend on 09.11.2016.
- */
 import { Button,Table,Navbar,Nav,NavItem,Form,ControlLabel, NavDropdown, FormGroup,FormControl, NavbarBrand, MenuItem, DropdownButton, Well, Panel, ButtonGroup, hr} from 'react-bootstrap';
 import React from 'react'
 import ReactDOM from 'react-dom';
@@ -13,16 +10,20 @@ import List from './List';
 
 var markerImg = 'marker.png';
 var map;
+
+// Temp storage for map elements, so they can easiliy be shown or hidden
 var chiefdomPolygons = [];
 var districtPolygons = [];
 var singlePolygons = [];
 var singleMarkers =[];
 
+/*
+Component for the live search part of the application 
+*/
 class Search extends React.Component {
     constructor(props, context) {
         super(props, context);
 
-        // variable used for 
         this.state = {
             isLoading: true
         };
@@ -53,8 +54,6 @@ class Search extends React.Component {
                 this.props.showAddOrgModal(true);
             });
 
-
-
             // Get all organisational units
             this.props.fetchOrganisations(map).
             then((orgs) => {
@@ -73,18 +72,17 @@ class Search extends React.Component {
         props.showChangeOrgModal(true);
     }
 
+
+    /*
+    A functions which displays properties of a
+    organisational unit on the map when selected 
+    by the user in the results list. 
+
+    The function draws the borders of a district
+    or a chiefdom and displays a facility as a 
+    marker.
+    */
     onItemClick(item, parent, map, singles) {
-
-        /*
-        A functions which displays properties of a
-        organisational unit on the map when selected 
-        by the user in the results list. 
-
-        The function draws the borders of a district
-        or a chiefdom and displays a facility as a 
-        marker.
-        */
-
         // get the list element
         var element = document.getElementById(item.id);
 
@@ -158,7 +156,7 @@ class Search extends React.Component {
 
         }
 
-        // Show a Chiefdoms border and give it an info window
+        // Show a Chiefdoms border overlay and give it an info window
         else if(item.level == 3){
 
             // Error Message if no coordinates
@@ -214,7 +212,7 @@ class Search extends React.Component {
             singlePolygons.push(chiefdomBorder);
         }
 
-        // Show a Districts border
+        // Show a Districts border overlay
         else if(item.level == 2){
 
             // Error Message if no coordinates
@@ -223,7 +221,9 @@ class Search extends React.Component {
                 return;
             }
 
-            // We don't want to remove existing single chiefdoms, user might want to see in which district said chiefdom is located.
+            /*
+            We don't want to remove existing single chiefdoms, user might want to see 
+            in which district said chiefdom is located.*/
             var newSingles = []
             singles.forEach(function(single){
                 if(single.type == "district")
@@ -245,10 +245,16 @@ class Search extends React.Component {
                 map: map
             });
 
+            // Create a click listener to the polygon
             districtBorder.addListener('click', function(event) {
+                // Hide the overlay
                 districtBorder.setMap(null);
+
+                // Zoom to district
                 map.setZoom(9);
                 map.setCenter(item.centerCoordinates);
+
+                // Create polygons for all chiefdoms in the district
                 item.children.forEach((child) => {
                     if(child.coordinates != undefined){
 
@@ -276,7 +282,6 @@ class Search extends React.Component {
     render() {
         return (
             <div id="wrapper">
-
                 <div id="search">
                     <div id="filter">
                         <Well>

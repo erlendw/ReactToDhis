@@ -1,5 +1,4 @@
 import React from 'react';
-
 import { Button,Table,Navbar,Nav,NavItem,Form,ControlLabel, NavDropdown, FormGroup,FormControl, NavbarBrand, MenuItem,  } from 'react-bootstrap';
 import {Route, Router, browserHistory} from 'react-router'
 import { CreateStore } from 'redux';
@@ -8,30 +7,16 @@ import AddOrg from './containers/AddOrg'
 import Header from './containers/Header'
 import Map from './containers/Map'
 
-
-
-
-
 class App extends React.Component {
-
     render() {
         return (
-            /*
-           <Router history={browserHistory}>
-
-                <Route path="/" component={Map}/>
-
-            </Router>*/
-
-        <div>
+            <div>
                <Header />
                 <Search />
             </div>
         );
     }
 }
-
-
 
 class Content extends React.Component {
     render() {
