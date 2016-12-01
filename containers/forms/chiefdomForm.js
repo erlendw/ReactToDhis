@@ -33,7 +33,7 @@ class chiefdomForm extends React.Component {
             name : '',
             shortName : '',
             displayName : '',
-            diasplayShortName : ''
+            displayShortName : ''
 
         };
     }
@@ -114,7 +114,7 @@ class chiefdomForm extends React.Component {
                                 <FormControl value={this.state.displayName} onChange={(e) => {this.handleChange(e)}} placeholder={this.props.currentOrg.displayName}/>
                             </Col>
                         </FormGroup>
-                        <FormGroup controlId="diasplayShortName">
+                        <FormGroup controlId="displayShortName">
                             <Col componentClass={ControlLabel} sm={4}>
                                 Short display name
                             </Col>
