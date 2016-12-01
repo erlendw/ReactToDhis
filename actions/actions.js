@@ -4,12 +4,12 @@ import async from 'async'
 import superagent from 'superagent'
 
 // Url for DHIS api. Variable "dhisAPI is defined in index.html"
-const serverUrl = dhisAPI + '/api/organisationUnits.json?fields=id,displayName,name,shortName,displayShortName,level,coordinates,parent[displayName,parent[displayName]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
+const serverUrl = dhisAPI + '/api/organisationUnits.json?fields=id,displayName,name,shortName,displayShortName,level,coordinates,parent[displayName,parent[displayName,parent[displayName]]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
 
 //const serverUrl = 'https://play.dhis2.org/test/api/organisationUnits.json?fields=id,displayName,name,shortName,displayShortName,level,coordinates,parent[displayName,parent[displayName]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
 
-var chiefdom = '';
-var district = '';
+var Chiefdom = '';
+var District = '';
 // Authentication for DHIS2
 const basicAuth = `Basic ${btoa('admin:district')}`;
 
@@ -532,7 +532,9 @@ Functions that filters the results list on levels
 */
 export const changeLevel = (e , data, all) => {
     return(dispatch) => {
+
         var satan = [];
+        console.log(e);
         if(e.target.value == 5){
             dispatch(updateSearch(all));
         }
@@ -619,45 +621,78 @@ export const showNoBorder = (props, map, singles) => {
 /*
 Adds a new unit to DHIS2
 */
-export const addNewOganisationUnit = (state) =>{
-
-    console.log(state)
+export const addNewOganisationUnit = (addOrg) =>{
 
     var level = 4;
-    var cords = {"lng":state.longitude, "lat": state.lattitude};
-    var cordsString = "[ "+state.longitude+", "+state.lattitude+" ]";
+    var cords = {"lng":addOrg.state.longitude, "lat": addOrg.state.lattitude};
+    var cordsString = "[ "+addOrg.state.longitude+", "+addOrg.state.lattitude+" ]";
 
+    // The new unit
     var data = {
-        "name":state.name, 
-        "shortName":state.shortName,
-        "displayName":state.displayName, 
-        "displayShortName":state.displayShortName, 
+        "name":addOrg.state.name, 
+        "shortName":addOrg.state.shortName,
+        "displayName":addOrg.state.displayName, 
+        "displayShortName":addOrg.state.displayShortName, 
         "coordinates":cordsString, 
-        "openingDate":state.date, 
-        "level":4, 
-        "displayName":state.displayName
-        "parent":{"id":Chiefdom, "displayName":"Badjia", "parent":{"id":District, "displayName":"Bo"}}
+        "openingDate":addOrg.state.date, 
+        "level":level, 
+        "displayName":addOrg.state.displayName,
+        "parent":{"id":Chiefdom, "displayName":"Badjia", "parent":{"id":District, "displayName":"Bo", "parent":{"displayName": "Sierra Leone"}}}
     };
 
-    console.log(data)
+    console.log(data);
 
+    console.log(addOrg.props.currentOrg.map);
 
     return (dispatch) => {
 
+        // Send to DHIS2
+        
         superagent.post(dhisAPI + '/api/organisationUnits')
             .send(data)
             .set('Authorization', basicAuth)
             .set('Accept', 'application/json')
             .end(function(err, response){
-                console.log(response);
-                console.log(response.data);
+
+                // If DHIS2 responds with right code
                 if(response.status == 201){
-                    dispatch(addOrganisation(data));
+
+                    var info =  '<div id="content">'+
+                        '<div id="siteNotice">'+
+                        '</div>'+
+                        '<h2 id="secondHeading" class="secondHeading">'+ addOrg.state.displayName+'</h2>'+
+                        '<div id="bodyContent">'+
+                        '<p><b>Chiefdom: </b>'+ Chiefdom +
+                        '<p><b>District: </b>'+ District +
+                        '</p>'+
+                        '</div>'+
+                        '</div>';
+
+                    // Creates the marker
+                    var marker = new google.maps.Marker({
+                        position: cords,
+                        label: addOrg.state.displayName,
+                        map: addOrg.props.currentOrg.map
+                    });
+
+                    // Create an info window for the marker
+                    var infowindow = new google.maps.InfoWindow({
+                        content: info
+                    });
+
+                    // Add listener to marker so info window is displayed if marker is clicked
+                    marker.addListener('click', function() {
+                        infowindow.open(addOrg.props.currentOrg.map, marker);
+                    });
+
+                    data.coordinatesObject = cords;
+
+                    // Refresh
+                    //dispatch(fetchOrganisations(addOrg.props.currentOrg.map));
+
                 }
             });
-
     }
-
 };
 
 /*
@@ -835,6 +870,7 @@ export const fetchOrganisations = (map) => {
 
                 // Set the array for the results list
                 dispatch(updateSearch(search));
+                
             })
             .catch(error => {
                 throw(error);

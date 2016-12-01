@@ -50,9 +50,14 @@ class Search extends React.Component {
 
             // Add listner for clicks on the map
             google.maps.event.addListener(map,'click', function(event) {
-                 this.props.updateCurrentOrg({'longitude':event.latLng.lng(), 'lattitude':event.latLng.lat()});
+                console.log(map);
+                console.log(event);
+                this.props.updateCurrentOrg({'longitude':event.latLng.lng(), 'lattitude':event.latLng.lat(), "map":map, "props":this.props});
                 this.props.showAddOrgModal(true);
+
+
             });
+           
 
             // Get all organisational units
             this.props.fetchOrganisations(map).

@@ -64,7 +64,35 @@ a{
   right: 0;
   background-color: rgba(0,0,0,0.4);
 }
+#loading2{
+  position: fixed;
+  z-index: 999;
+  height: 100%;
+  width: 100%;
+  overflow: show;
+  margin: auto;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: rgba(0,0,0,0.4);
+}
 #inner-loading {
+  position: fixed;
+  z-index: 999;
+  height: 2em;
+  width: 40em;
+  overflow: show;
+  margin: auto;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  color: #FFFFFF;
+  text-align: center;
+
+}
+#inner-loading2{
   position: fixed;
   z-index: 999;
   height: 2em;

@@ -45,15 +45,14 @@ class AddOrg extends React.Component {
     }
 
     handleSubmit(){
-
-        this.props.addNewOganisationUnit(this.state);
-        this.props.showAddOrgModal(false)
+        this.props.addNewOganisationUnit(this);
+        this.props.showAddOrgModal(false);
+        this.setState({isLoading: true});
     }
 
     setOpeningDate(event) {
-        console.log(event.target.value);
         this.setState({ date : event.target.value });
-        console.log(this.state.date);
+
     }
 
     handleChange(e){
@@ -157,7 +156,7 @@ class AddOrg extends React.Component {
 
                                 <FormGroup controlId="lattitude">
                                     <Col componentClass={ControlLabel} sm={4}>
-                                        Lattitude
+                                        Latitude
                                     </Col>
                                     <Col sm={6}>
                                         <FormControl type="number" value={this.state.lattitude} onChange={(e) => {this.handleChange(e)}} placeholder="pleace enter longitude" />
@@ -185,7 +184,6 @@ class AddOrg extends React.Component {
                         >Close</Button>
                     </Modal.Footer>
                 </Modal>
-
             </div>
         )
     }
