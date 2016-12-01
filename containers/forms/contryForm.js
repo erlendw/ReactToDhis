@@ -40,7 +40,7 @@ class contryForm extends React.Component {
 
     handleSubmit(){
 
-        console.log()
+  
 
         this.props.editOganisationUnit(this);
         this.props.showChangeOrgModal(false);
@@ -48,30 +48,30 @@ class contryForm extends React.Component {
 
 
     handleChange(e){
-        console.log(e.target.id);
+ 
 
         switch (e.target.id){
 
             case 'name':
-                console.log(e.target.value);
+
                 this.setState({
                     name : e.target.value
                 });
                 break;
             case 'shortName':
-                console.log(e.target.value);
+
                 this.setState({
                     shortName : e.target.value
                 });
                 break;
             case 'displayName':
-                console.log(e.target.value);
+ 
                 this.setState({
                     displayName : e.target.value
                 });
                 break;
             case 'displayShortName':
-                console.log(e.target.value);
+
                 this.setState({
                     displayShortName : e.target.value
                 });

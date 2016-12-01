@@ -11,21 +11,23 @@
 	<meta charset="UTF-8">
 	<title>React App</title>
 	<style>
+      #map {
+          height: 85%;
+          float:left;
+        }
       html, body {
         height: 100%;
         margin: 0;
         padding: 0;
       }
   </style>
-    <!--<script>
-        var xhReq = new XMLHttpRequest();
-        xhReq.open("GET", "../manifest.webapp", false);
-        xhReq.send(null);
-        var serverResponse = JSON.parse(xhReq.responseText);
-        var dhisAPI = serverResponse.activities.dhis.href;
-        console.log(dhisAPI);
-    </script>-->
-</head>
+  <script>
+      var xhReq = new XMLHttpRequest();
+      xhReq.open("GET", "manifest.webapp", false);
+      xhReq.send(null);
+      var serverResponse = JSON.parse(xhReq.responseText);
+      var dhisAPI = serverResponse.activities.dhis.href;
+  </script>
 
 <body>
 	  <div id="app"></div>

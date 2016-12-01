@@ -1,14 +1,10 @@
 export default (state = [], action) => {
 	var ut = [...state];
 	if(action.type == 'SHOW_ALL_CHILD_POLYGONS'){
-		console.log(...state);
 		action.polys.forEach((wagner)=>{
-			console.log("fartbucket");
 			ut.push(wagner);
-
 		});
 	}
-	
 
 
   switch (action.type) {

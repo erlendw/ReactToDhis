@@ -716,7 +716,7 @@ export const editOganisationUnit = (bigObj) =>{
 
 
 
-    console.log(currentOrg);
+   
 
     return (dispatch) => {
         superagent.put(dhisAPI + '/api/organisationUnits/' + currentOrg.id)
@@ -724,7 +724,7 @@ export const editOganisationUnit = (bigObj) =>{
             .set('Authorization', basicAuth)
             .set('Accept', 'application/json')
             .end(function(err, response){
-                console.log(response);
+                 window.alert("Unit successfully edited");
 
             });
     }
