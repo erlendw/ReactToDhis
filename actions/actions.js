@@ -4,9 +4,9 @@ import async from 'async'
 import superagent from 'superagent'
 
 // Url for DHIS api. Variable "dhisAPI is defined in index.html"
-const serverUrl = dhisAPI + '/api/organisationUnits.json?fields=id,displayName,name,shortName,displayShortName,level,coordinates,parent[displayName,parent[displayName,parent[displayName]]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
+const serverUrl = dhisAPI + '/api/organisationUnits.json?fields=openingDate,id,displayName,name,shortName,displayShortName,level,coordinates,parent[id,displayName,parent[id,displayName,parent[id,displayName]]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
 
-//const serverUrl = 'https://play.dhis2.org/test/api/organisationUnits.json?fields=id,displayName,name,shortName,displayShortName,level,coordinates,parent[displayName,parent[displayName]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
+//const serverUrl = 'https://play.dhis2.org/test/api/organisationUnits.json?fields=openingDate,id,displayName,name,shortName,displayShortName,level,coordinates,parent[id,displayName,parent[id,displayName,parent[id,displayName]]],children[id,displayName,level,coordinates,children[displayName,coordinates,level,children[id,displayName,level,coordinates,parent[displayName,parent[displayName]]]]]&paging=false';
 
 var Chiefdom = '';
 var District = '';
@@ -698,30 +698,35 @@ export const addNewOganisationUnit = (addOrg) =>{
 /*
 Edits a unit in DHIS2
 */
-export const editOganisationUnit = (state) =>{
+export const editOganisationUnit = (bigObj) =>{
 
 
-    console.log(state);
+    var currentOrg = bigObj.props.currentOrg;
+    var formState = bigObj.state;
 
-    var cords = {"lng":state.longitude, "lat": state.lattitude};
-    if(state.longitude != undefined && state.lattitude){
-        var cordsString = "[ "+state.longitude+", "+state.lattitude+" ]";
+    for(var key in formState){
+
+        if(formState.hasOwnProperty(key)){
+            if(formState[key] != ""){
+                currentOrg[key] = formState[key]
+            }
+        }
+
     }
 
 
+
+    console.log(currentOrg);
+
     return (dispatch) => {
-
-        var datatosend = {"name":state.name, "shortName":state.shortName, "openingDate":state.date, "displayName":state.name, "coordinates":cordsString};
-
-        superagent.put(dhisAPI + '/api/organisationUnits/' + id)
-            .send(datatosend)
+        superagent.put(dhisAPI + '/api/organisationUnits/' + currentOrg.id)
+            .send(currentOrg)
             .set('Authorization', basicAuth)
             .set('Accept', 'application/json')
             .end(function(err, response){
                 console.log(response);
 
             });
-
     }
 
 };

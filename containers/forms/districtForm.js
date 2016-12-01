@@ -33,16 +33,13 @@ class districtForm extends React.Component {
             name : '',
             shortName : '',
             displayName : '',
-            diasplayShortName : ''
+            displayShortName : ''
 
         };
     }
 
     handleSubmit(){
-
-        console.log(this.state)
-
-        this.props.editOganisationUnit(this.state);
+        this.props.editOganisationUnit(this);
         this.props.showChangeOrgModal(false);
     }
 

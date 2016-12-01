@@ -42,7 +42,8 @@ class contryForm extends React.Component {
 
         console.log()
 
-        this.props.editOganisationUnit(this.state)
+        this.props.editOganisationUnit(this);
+        this.props.showChangeOrgModal(false);
     }
 
 

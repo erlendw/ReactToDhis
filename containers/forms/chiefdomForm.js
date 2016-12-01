@@ -40,9 +40,8 @@ class chiefdomForm extends React.Component {
 
     handleSubmit(){
 
-        console.log()
-
-        this.props.editOganisationUnit(this.state)
+        this.props.editOganisationUnit(this);
+        this.props.showChangeOrgModal(false);
     }
 
 
