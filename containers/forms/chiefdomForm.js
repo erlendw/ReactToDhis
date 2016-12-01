@@ -71,7 +71,7 @@ class chiefdomForm extends React.Component {
             case 'displayShortName':
                 console.log(e.target.value);
                 this.setState({
-                    diasplayShortName : e.target.value
+                    displayShortName : e.target.value
                 });
                 break;
         }
