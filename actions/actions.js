@@ -791,7 +791,7 @@ export const fetchOrganisations = (map) => {
 
                             // For special cases
                             if(typeof j[0] == "string" && j.length == 2){    
-                                                   
+                                
                                 ut = {
                                     lng: Number(j[0]),
                                     lat: Number(j[1])
